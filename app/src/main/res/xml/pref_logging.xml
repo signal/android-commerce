@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked. -->
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="debug_enabled"
+        android:title="@string/pref_title_logging_debug"/>
+
+    <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+    <SwitchPreference
+        android:defaultValue="true"
+        android:dependency="debug_enabled"
+        android:key="verbose_enabled"
+        android:title="@string/pref_title_logging_verbose"/>
+
+</PreferenceScreen>
