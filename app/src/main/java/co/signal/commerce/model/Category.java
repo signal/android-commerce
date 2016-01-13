@@ -1,7 +1,7 @@
 package co.signal.commerce.model;
 
 /**
- * Created by jsokel on 1/12/16.
+ * Product Categories
  */
 public class Category {
   private final String categoryId;
@@ -44,6 +44,10 @@ public class Category {
     public Builder name(String name) {
       this.name = name;
       return this;
+    }
+
+    public Category build() {
+      return new Category(this);
     }
   }
 }

@@ -6,8 +6,9 @@ package co.signal.commerce.model;
 public class Product {
   private final String productId;
   private final String sku;
-  private final String name;
+  private final String title;
   private final String description;
+  private final String details;
   private final String imageUrl;
   private final String regularPrice;
   private final String regularPriceWithTax;
@@ -15,19 +16,18 @@ public class Product {
   private final String finalPriceWithTax;
   private final boolean onSale;
 
-  private Product(String productId, String sku, String name, String description, String imageUrl,
-                 String regularPrice, String regularPriceWithTax,
-                 String finalPrice, String finalPriceWithTax, boolean onSale) {
-    this.productId = productId;
-    this.sku = sku;
-    this.name = name;
-    this.description = description;
-    this.imageUrl = imageUrl;
-    this.regularPrice = regularPrice;
-    this.regularPriceWithTax = regularPriceWithTax;
-    this.finalPrice = finalPrice;
-    this.finalPriceWithTax = finalPriceWithTax;
-    this.onSale = onSale;
+  private Product(Builder builder) {
+    this.productId = builder.productId;
+    this.sku = builder.sku;
+    this.title = builder.title;
+    this.description = builder.description;
+    this.details = builder.details;
+    this.imageUrl = builder.imageUrl;
+    this.regularPrice = builder.regularPrice;
+    this.regularPriceWithTax = builder.regularPriceWithTax;
+    this.finalPrice = builder.finalPrice;
+    this.finalPriceWithTax = builder.finalPriceWithTax;
+    this.onSale = builder.onSale;
   }
 
   public String getProductId() {
@@ -38,12 +38,16 @@ public class Product {
     return sku;
   }
 
-  public String getName() {
-    return name;
+  public String getTitle() {
+    return title;
   }
 
   public String getDescription() {
     return description;
+  }
+
+  public String getDetails() {
+    return details;
   }
 
   public String getImageUrl() {
@@ -73,8 +77,9 @@ public class Product {
   public static final class Builder {
     private String productId;
     private String sku;
-    private String name;
+    private String title;
     private String description;
+    private String details;
     private String imageUrl;
     private String regularPrice;
     private String regularPriceWithTax;
@@ -92,13 +97,18 @@ public class Product {
       return this;
     }
 
-    public Builder name(String name) {
-      this.name = name;
+    public Builder title(String title) {
+      this.title = title;
       return this;
     }
 
     public Builder description(String description) {
       this.description = description;
+      return this;
+    }
+
+    public Builder details(String details) {
+      this.details = details;
       return this;
     }
 
@@ -130,6 +140,10 @@ public class Product {
     public Builder onSale(boolean onSale) {
       this.onSale = onSale;
       return this;
+    }
+
+    public Product build() {
+      return new Product(this);
     }
   }
 }
