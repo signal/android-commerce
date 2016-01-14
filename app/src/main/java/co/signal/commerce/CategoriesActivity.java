@@ -1,13 +1,29 @@
 package co.signal.commerce;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
-public class CategoriesActivity extends AppCompatActivity {
+import co.signal.commerce.api.ApiManager;
+import co.signal.commerce.model.Category;
+
+public class CategoriesActivity extends BaseActivity {
+
+  @Inject
+  ApiManager apiManager;
+//  @Inject
+//  Tracker tracker;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -25,5 +41,35 @@ public class CategoriesActivity extends AppCompatActivity {
       }
     });
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+    RetrieveCategoriesTask task = new RetrieveCategoriesTask();
+    task.execute();
+
+  }
+
+  private class RetrieveCategoriesTask extends AsyncTask<String, Void, List<Category>> {
+    @Override
+    protected List<Category> doInBackground(String ... id) {
+      List<Category> result = null;
+      try {
+        if (id == null || id.length == 0) {
+          result = apiManager.getMainCategories();
+        } else {
+          result = apiManager.getSubCategories(id[0]);
+        }
+      } catch (IOException e) {
+        Log.e("commerce", "Failed", e);
+      }
+      return result;
+    }
+
+    @Override
+    protected void onPostExecute(List<Category> categories) {
+      super.onPostExecute(categories);
+      Log.d("commerce", "Retrieved " + categories.size() + " categories");
+      for (Category category : categories) {
+        // TODO Draw Categories
+      }
+    }
   }
 }
