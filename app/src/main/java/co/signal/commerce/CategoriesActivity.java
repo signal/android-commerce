@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -22,8 +21,6 @@ public class CategoriesActivity extends BaseActivity {
 
   @Inject
   ApiManager apiManager;
-//  @Inject
-//  Tracker tracker;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +55,7 @@ public class CategoriesActivity extends BaseActivity {
           result = apiManager.getSubCategories(id[0]);
         }
       } catch (IOException e) {
-        Log.e("commerce", "Failed", e);
+        Log.e("commerce", "Retrieve Categories Failed", e);
       }
       return result;
     }
@@ -66,9 +63,12 @@ public class CategoriesActivity extends BaseActivity {
     @Override
     protected void onPostExecute(List<Category> categories) {
       super.onPostExecute(categories);
-      Log.d("commerce", "Retrieved " + categories.size() + " categories");
-      for (Category category : categories) {
-        // TODO Draw Categories
+      if (categories != null) {
+        tracker.publish("load:categories", "type", "main", "qty", String.valueOf(categories.size()));
+        Log.d("commerce", "Retrieved " + categories.size() + " categories");
+        for (Category category : categories) {
+          // TODO Draw Categories
+        }
       }
     }
   }

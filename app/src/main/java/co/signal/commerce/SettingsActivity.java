@@ -1,6 +1,5 @@
 package co.signal.commerce;
 
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +16,11 @@ import android.view.MenuItem;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import co.signal.commerce.module.ApplicationModule;
+import co.signal.serverdirect.api.Tracker;
+
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
  * handset devices, settings are presented as a single list. On tablets,
@@ -29,10 +33,21 @@ import java.util.List;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+  @Inject
+  Tracker tracker;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    ((CommerceApplication)getApplication()).inject(this);
     super.onCreate(savedInstanceState);
     setupActionBar();
+  }
+
+  @Override
+  protected void onPostResume() {
+    super.onPostResume();
+    String name = this.getClass().getSimpleName();
+    tracker.publish("view:" + name);
   }
 
   /**
@@ -149,7 +164,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
       // to their values. When their values change, their summaries are
       // updated to reflect the new value, per the Android Design
       // guidelines.
-      bindPreferenceSummaryToValue(findPreference("siteid"));
+      bindPreferenceSummaryToValue(findPreference(ApplicationModule.PREF_SITE_ID));
     }
 
     @Override

@@ -6,7 +6,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import android.util.JsonReader;
-import android.util.Log;
 
 import com.google.common.collect.ImmutableList;
 
@@ -21,8 +20,7 @@ public class CategoryListParser implements BaseParser<List<Category>> {
     ImmutableList.Builder<Category> builder = ImmutableList.builder();
     reader.beginObject();
     while (reader.hasNext()) {
-      String name = reader.nextName(); // The entity id
-      Log.d("parsing", "Parse Cat: "+name);
+      reader.nextName(); // The entity id, skip it
       builder.add(categoryParser.parse(reader));
     }
     reader.endObject();

@@ -147,25 +147,3 @@ public class Product {
     }
   }
 }
-
-//"384": {
-//    "entity_id": "384",
-//    "type_id": "simple",
-//    "sku": "hdb008",
-//    "material": "129",
-//    "bed_bath_type": "184",
-//    "decor_type": "217",
-//    "color": "27",
-//    "description": "Woven acrylic/wool/cotton. 50\" x 75\". Spot clean.",
-//    "meta_keyword": null,
-//    "short_description": "A rustic wool blend leaves our Park Row Throw feeling lofty and warm. Packs perfectly into carry-ons.",
-//    "name": "Park Row Throw",
-//    "meta_title": null,
-//    "meta_description": null,
-//    "regular_price_with_tax": 259.8,
-//    "regular_price_without_tax": 240,
-//    "final_price_with_tax": 129.9,
-//    "final_price_without_tax": 120,
-//    "is_saleable": true,
-//    "image_url": "http://commerce.signal.ninja/media/catalog/product/cache/0/image/9df78eab33525d08d6e5fb8d27136e95/h/d/hdb008_1.jpg"
-//    }

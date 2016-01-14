@@ -1,7 +1,7 @@
 package co.signal.commerce.model;
 
 /**
- * Product Categories
+ * Product Category
  */
 public class Category {
   private final String categoryId;

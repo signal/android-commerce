@@ -1,5 +1,7 @@
 package co.signal.commerce;
 
+import javax.inject.Inject;
+
 import android.app.Application;
 
 import co.signal.commerce.module.ApplicationModule;
@@ -13,12 +15,9 @@ public class CommerceApplication extends Application {
 
   @Override
   public void onCreate() {
-    super.onCreate();
-    objectGraph = ObjectGraph.create(new ApplicationModule());
-  }
+    objectGraph = ObjectGraph.create(new ApplicationModule(this));
 
-  public ObjectGraph getObjectGraph() {
-    return objectGraph;
+    super.onCreate();
   }
 
   public void inject(Object object) {

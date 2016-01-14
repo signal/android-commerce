@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -19,6 +20,7 @@ import co.signal.commerce.model.Product;
 /**
  * Manages the API calls and json processing to Magento on commerce.signal.ninja
  */
+@Singleton
 public class ApiManager {
 
   @Inject @Named("API_URL")
@@ -29,14 +31,6 @@ public class ApiManager {
   ProductListParser productListParser;
   @Inject
   ProductParser productParser;
-
-//  @Inject
-//  public ApiManager(String baseUrl, CategoryListParser categoryListParser, ProductListParser productListParser, ProductParser productParser) {
-//    this.baseUrl = baseUrl;
-//    this.categoryListParser = categoryListParser;
-//    this.productListParser = productListParser;
-//    this.productParser = productParser;
-//  }
 
   public List<Category> getMainCategories() throws IOException {
     return callServer(categoryListParser, buildUrl("categories", null, null, null));
