@@ -29,6 +29,8 @@ public class CategoryParser implements BaseParser<Category> {
         builder.name(reader.nextString());
       } else if ("parent_id".equals(key)) {
         builder.parentId(reader.nextString());
+      } else if ("children_count".equals(key)) {
+        builder.children(reader.nextInt());
       } else {
         reader.skipValue();
       }

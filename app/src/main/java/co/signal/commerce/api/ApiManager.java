@@ -1,6 +1,7 @@
 package co.signal.commerce.api;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -13,6 +14,7 @@ import javax.inject.Singleton;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.JsonReader;
+import android.util.Log;
 
 import co.signal.commerce.model.Category;
 import co.signal.commerce.model.Product;
@@ -76,12 +78,19 @@ public class ApiManager {
   private static <T> T callServer(BaseParser<T> parser, URL url) throws IOException {
     T result = null;
     HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+    conn.setRequestProperty("Accept", "application/json");
     try {
-      JsonReader reader = new JsonReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-      try {
-        result = parser.parse(reader);
-      } finally {
-        reader.close();
+      int resp = conn.getResponseCode();
+      if (resp == 200) {
+        InputStream inputStream = conn.getInputStream();
+        JsonReader reader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
+        try {
+          result = parser.parse(reader);
+        } finally {
+          reader.close();
+        }
+      } else {
+        Log.e("api", "Request Failed: " + resp + "|" + conn.getResponseMessage());
       }
     } finally {
       conn.disconnect();

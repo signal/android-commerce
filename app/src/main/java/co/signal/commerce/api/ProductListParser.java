@@ -20,6 +20,7 @@ public class ProductListParser implements BaseParser<List<Product>> {
     ImmutableList.Builder<Product> builder = ImmutableList.builder();
     reader.beginObject();
     while (reader.hasNext()) {
+      reader.nextName(); // The entity id, skip it
       builder.add(productParser.parse(reader));
     }
     reader.endObject();

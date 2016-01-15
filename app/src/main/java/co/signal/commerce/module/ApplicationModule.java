@@ -8,10 +8,12 @@ import javax.inject.Singleton;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import co.signal.commerce.CategoriesActivity;
 import co.signal.commerce.MainActivity;
+import co.signal.commerce.ProductsActivity;
 import co.signal.commerce.SettingsActivity;
 import co.signal.commerce.api.CategoryParser;
 import co.signal.commerce.api.ProductParser;
@@ -27,6 +29,7 @@ import dagger.Provides;
   injects = {
     MainActivity.class,
     CategoriesActivity.class,
+    ProductsActivity.class,
     SettingsActivity.class
   }
 )
@@ -61,8 +64,14 @@ public class ApplicationModule {
     return new CategoryParser();
   }
 
+  @Provides @Named(NAME_SITE_ID)
+  public String provideSiteId() {
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+    return preferences.getString("siteid", "NotSet"); // Set it SettingsActivity
+  }
+
   @Provides @Singleton
-  public SignalConfig provideSignalConfig() {
+  public SignalConfig provideSignalConfig(@Named("SITE_ID") String siteId) {
     SignalConfig config = SignalInc.createConfig(appContext)
         .setEndpoint("https://mobile-stage.signal.ninja/mobile")
         .setDebug(true)
@@ -71,13 +80,15 @@ public class ApplicationModule {
         .setPublishInBackground(true)
         .setMessageRetryCount(3)
         .setDispatchInterval(20)
-        .setLifecycleEventsEnabled(true)
         .setMaxQueuedMessages(100)
         .setMessageExpiration(3600)
         .setSocketConnectTimeout(10000)
         .setSocketReadTimeout(5000)
         .setNetworkWifiOnly(false);
 
+    if (TextUtils.isEmpty(siteId) || "NotSet".equals(siteId)) {
+      config.setLifecycleEventsEnabled(false);
+    }
     config.setStandardFields(StandardField.Timezone, StandardField.ScreenOrientation,
                              StandardField.DeviceInfo);
 
@@ -90,12 +101,6 @@ public class ApplicationModule {
     return SignalInc.getInstance(appContext, config);
   }
 
-  @Provides @Named(NAME_SITE_ID)
-  public String provideSiteId() {
-    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-    return preferences.getString("siteid", "NotSet"); // Set it SettingsActivity
-  }
-
   /**
    * Returns the default tracker from SignalSDK. Should not be a Singleton from Dagger's
    * point of view, and should always ask SignalInc for the default tracker;
@@ -106,14 +111,17 @@ public class ApplicationModule {
   public Tracker provideSignalTracker(SignalInc signalInc, @Named("SITE_ID") String siteId) {
     // This is not typical of a real app. This demo app allows the config and SiteId
     // to be changed dynamically, so all the Signal objects are discretely provided.
-    // Normally, all would be in this one method and provide the Tracker as a singleton.
-//    if (TextUtils.isEmpty(siteId) || "NotSet".equals(siteId)) {
-//      return new NullTracker();
-//    }
+    // Normally, all setup would be in this one method and provide the Tracker as a singleton.
+    if (TextUtils.isEmpty(siteId) || "NotSet".equals(siteId)) {
+      return NULL_TRACKER;
+    }
     return signalInc.getTracker(siteId);
   }
 
-  private class NullTracker implements Tracker {
+  /**
+   * Use a null tracker until the SiteId is set.
+   */
+  private static final Tracker NULL_TRACKER = new Tracker() {
     @Override
     public String getSiteId() { return null; }
 
@@ -125,12 +133,12 @@ public class ApplicationModule {
 
     @Override
     public void publish(String s, String... strings) {
-      Log.d("tracker", "NullTracker - nothing published");
+      Log.d("tracker", "NullTracker - nothing published | " + s);
     }
 
     @Override
     public void publish(String s, Map<String, String> map) {
-      Log.d("tracker", "NullTracker - nothing published");
+      Log.d("tracker", "NullTracker - nothing published | " + s);
     }
 
     @Override
@@ -142,5 +150,5 @@ public class ApplicationModule {
     public void addCustomField(String s, String s1) {
       Log.d("tracker", "NullTracker - nothing changed");
     }
-  }
+  };
 }
