@@ -21,11 +21,13 @@ import android.widget.TextView;
 import co.signal.commerce.api.ApiManager;
 import co.signal.commerce.model.Category;
 import co.signal.commerce.model.Product;
+import co.signal.util.SignalLogger;
 
 public class ProductsActivity extends BaseActivity {
   private static final String PRODUCT_ID = "productId";
 
-  LinearLayout productList;
+  private LinearLayout productList;
+  private String categoryId;
 
   @Inject
   ApiManager apiManager;
@@ -50,7 +52,8 @@ public class ProductsActivity extends BaseActivity {
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     RetrieveProductsTask task = new RetrieveProductsTask();
-    task.execute(getIntent().getExtras().getString(CategoriesActivity.CATEGORY_ID));
+    categoryId = getIntent().getExtras().getString(CategoriesActivity.CATEGORY_ID);
+    task.execute();
   }
 
   @Override
@@ -67,7 +70,7 @@ public class ProductsActivity extends BaseActivity {
     protected List<Product> doInBackground(String ... id) {
       List<Product> result = null;
       try {
-        result = apiManager.getProducts(id[0]);
+        result = apiManager.getProducts(categoryId);
       } catch (IOException e) {
         Log.e("commerce", "Retrieve Products Failed", e);
       }
@@ -78,8 +81,10 @@ public class ProductsActivity extends BaseActivity {
     protected void onPostExecute(List<Product> products) {
       super.onPostExecute(products);
       if (products != null) {
-        tracker.publish("load:product", "type", "main", "qty", String.valueOf(products.size()));
-        Log.d("commerce", "Retrieved " + products.size() + " product");
+        SignalLogger.df("products", "Retrieved %d products from %s", products.size(), categoryId);
+        tracker.publish("load:products",
+            "qty", String.valueOf(products.size()),
+            "categoryId", categoryId);
         for (final Product product : products) {
           TextView view = new TextView(ProductsActivity.this);
           view.setText(product.getTitle());
@@ -90,6 +95,7 @@ public class ProductsActivity extends BaseActivity {
               Intent intent = new Intent(ProductsActivity.this, ProductsActivity.class);
               intent.putExtra(PRODUCT_ID, product.getProductId());
               startActivity(intent);
+              tracker.publish("click:product", "productId", product.getProductId());
             }
           });
           productList.addView(view);

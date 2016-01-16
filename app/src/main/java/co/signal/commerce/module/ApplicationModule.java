@@ -1,5 +1,6 @@
 package co.signal.commerce.module;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.inject.Named;
@@ -21,6 +22,7 @@ import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.SignalInc;
 import co.signal.serverdirect.api.StandardField;
 import co.signal.serverdirect.api.Tracker;
+import co.signal.util.SignalLogger;
 import dagger.Module;
 import dagger.Provides;
 
@@ -132,23 +134,23 @@ public class ApplicationModule {
     public void setDebug(boolean b) { }
 
     @Override
-    public void publish(String s, String... strings) {
-      Log.d("tracker", "NullTracker - nothing published | " + s);
+    public void publish(String event, String... values) {
+      SignalLogger.df("tracker", "NullTracker - nothing published | %s | %s", event, Arrays.toString(values));
     }
 
     @Override
-    public void publish(String s, Map<String, String> map) {
-      Log.d("tracker", "NullTracker - nothing published | " + s);
+    public void publish(String event, Map<String, String> values) {
+      SignalLogger.df("tracker", "NullTracker - nothing published | %s | %s ", event, values);
     }
 
     @Override
     public void addStandardFields(StandardField... standardFields) {
-      Log.d("tracker", "NullTracker - nothing changed");
+      SignalLogger.df("tracker", "NullTracker - nothing changed");
     }
 
     @Override
     public void addCustomField(String s, String s1) {
-      Log.d("tracker", "NullTracker - nothing changed");
+      SignalLogger.df("tracker", "NullTracker - nothing changed");
     }
   };
 }

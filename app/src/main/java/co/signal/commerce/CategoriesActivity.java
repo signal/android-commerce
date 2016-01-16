@@ -20,11 +20,13 @@ import android.widget.TextView;
 
 import co.signal.commerce.api.ApiManager;
 import co.signal.commerce.model.Category;
+import co.signal.util.SignalLogger;
 
 public class CategoriesActivity extends BaseActivity {
   public static final String CATEGORY_ID = "categoryId";
 
-  LinearLayout categorylist;
+  private LinearLayout categorylist;
+  private String categoryId;
 
   @Inject
   ApiManager apiManager;
@@ -50,7 +52,8 @@ public class CategoriesActivity extends BaseActivity {
 
     RetrieveCategoriesTask task = new RetrieveCategoriesTask();
     Bundle extras = getIntent().getExtras();
-    task.execute(extras!=null ? extras.getString(CATEGORY_ID) : null);
+    categoryId = extras==null ? null : extras.getString(CATEGORY_ID);
+    task.execute();
   }
 
   @Override
@@ -67,13 +70,13 @@ public class CategoriesActivity extends BaseActivity {
     protected List<Category> doInBackground(String ... id) {
       List<Category> result = null;
       try {
-        if (id == null || id.length == 0) {
+        if (categoryId == null) {
           result = apiManager.getMainCategories();
         } else {
-          result = apiManager.getSubCategories(id[0]);
+          result = apiManager.getSubCategories(categoryId);
         }
       } catch (IOException e) {
-        Log.e("commerce", "Retrieve Categories Failed", e);
+        Log.e("commerce", "Retrieve Categories Failed for:" + categoryId, e);
       }
       return result;
     }
@@ -82,8 +85,11 @@ public class CategoriesActivity extends BaseActivity {
     protected void onPostExecute(List<Category> categories) {
       super.onPostExecute(categories);
       if (categories != null) {
-        tracker.publish("load:categories", "type", "main", "qty", String.valueOf(categories.size()));
-        Log.d("commerce", "Retrieved " + categories.size() + " categories");
+        SignalLogger.df("category", "Retrieved %d categories from %s", categories.size(), categoryId);
+        tracker.publish("load:categories",
+            "type", categoryId == null ? "main" : "sub",
+            "qty", String.valueOf(categories.size()),
+            "categoryId", categoryId);
         for (final Category category : categories) {
           TextView view = new TextView(CategoriesActivity.this);
           view.setText(category.getName());
@@ -92,14 +98,18 @@ public class CategoriesActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
               Intent intent;
+              String event;
               if (category.getChildren() > 0) {
                 intent = new Intent(CategoriesActivity.this, CategoriesActivity.class);
                 intent.putExtra(CATEGORY_ID, category.getCategoryId());
+                event = "click:category";
               } else {
                 intent = new Intent(CategoriesActivity.this, ProductsActivity.class);
                 intent.putExtra(CATEGORY_ID, category.getCategoryId());
+                event = "click:products";
               }
               startActivity(intent);
+              tracker.publish(event, "categoryId", category.getCategoryId());
             }
           });
           categorylist.addView(view);
