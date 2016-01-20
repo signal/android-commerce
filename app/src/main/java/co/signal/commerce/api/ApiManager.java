@@ -71,9 +71,10 @@ public class ApiManager {
   }
 
   /**
-   * Call the server API and return the json data, or throw an exception
+   * Call the server API and parse the response data returning the corresponding object.
    *
    * @return The response object from the server
+   * @throws IOException in the event the server or request fails
    */
   private static <T> T callServer(BaseParser<T> parser, URL url) throws IOException {
     T result = null;

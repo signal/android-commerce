@@ -33,7 +33,7 @@ import co.signal.commerce.model.Product;
  *   "image_url": "http://commerce.signal.ninja/media/catalog/product/cache/0/image/9df78eab33525d08d6e5fb8d27136e95/w/p/wpd010t.jpg"
  * }
  */
-public class ProductParser implements BaseParser<Product> {
+public class ProductParser extends BaseParser<Product> {
 
   @Override
   public Product parse(JsonReader reader) throws IOException {
@@ -64,7 +64,9 @@ public class ProductParser implements BaseParser<Product> {
       } else if ("is_saleable".equals(key)) {
         builder.onSale(reader.nextBoolean());
       } else if ("image_url".equals(key)) {
-        builder.imageUrl(reader.nextString());
+        String url = reader.nextString();
+        builder.imageUrl(url);
+        builder.thumbnailUrl(getThumbnailUrl(url, 100));
       } else {
         reader.skipValue();
       }

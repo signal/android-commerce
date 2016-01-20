@@ -10,6 +10,7 @@ public class Product {
   private final String description;
   private final String details;
   private final String imageUrl;
+  private final String thumbnailUrl;
   private final String regularPrice;
   private final String regularPriceWithTax;
   private final String finalPrice;
@@ -23,6 +24,7 @@ public class Product {
     this.description = builder.description;
     this.details = builder.details;
     this.imageUrl = builder.imageUrl;
+    this.thumbnailUrl = builder.thumbnailUrl;
     this.regularPrice = builder.regularPrice;
     this.regularPriceWithTax = builder.regularPriceWithTax;
     this.finalPrice = builder.finalPrice;
@@ -54,6 +56,10 @@ public class Product {
     return imageUrl;
   }
 
+  public String getThumbnailUrl() {
+    return thumbnailUrl;
+  }
+
   public String getRegularPrice() {
     return regularPrice;
   }
@@ -81,6 +87,7 @@ public class Product {
     private String description;
     private String details;
     private String imageUrl;
+    private String thumbnailUrl;
     private String regularPrice;
     private String regularPriceWithTax;
     private String finalPrice;
@@ -114,6 +121,11 @@ public class Product {
 
     public Builder imageUrl(String imageUrl) {
       this.imageUrl = imageUrl;
+      return this;
+    }
+
+    public Builder thumbnailUrl(String thumbnailUrl) {
+      this.thumbnailUrl = thumbnailUrl;
       return this;
     }
 

@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 
 import co.signal.commerce.model.Product;
 
-public class ProductListParser implements BaseParser<List<Product>> {
+public class ProductListParser extends BaseParser<List<Product>> {
   @Inject
   ProductParser productParser;
 

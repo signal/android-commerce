@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import co.signal.commerce.CategoriesActivity;
 import co.signal.commerce.MainActivity;
@@ -40,11 +39,13 @@ public class ApplicationModule {
   // Named strings for injection
   public static final String NAME_SITE_ID = "SITE_ID";
   public static final String NAME_API_URL = "API_URL";
+  public static final String NAME_THUMB_URL = "THUMB_URL";
 
   // Preference keys
   public static final String PREF_SITE_ID = "siteid";
 
   private static final String BOUTIQUE_111_URL = "http://commerce.signal.ninja/api/rest/";
+  private static final String RE_THUMB_URL = "http://api.rethumb.com/v1/square/";
   private Context appContext;
 
   public ApplicationModule(Context appContext) {
@@ -54,6 +55,11 @@ public class ApplicationModule {
   @Provides @Singleton @Named(NAME_API_URL)
   public String provideBoutique111Url() {
     return BOUTIQUE_111_URL;
+  }
+
+  @Provides @Singleton @Named(NAME_THUMB_URL)
+  public String provideThumbnailUrl() {
+    return RE_THUMB_URL;
   }
 
   @Provides @Singleton
@@ -135,12 +141,12 @@ public class ApplicationModule {
 
     @Override
     public void publish(String event, String... values) {
-      SignalLogger.df("tracker", "NullTracker - nothing published | %s | %s", event, Arrays.toString(values));
+      SignalLogger.df("tracker", "NullTracker | %s | %s", event, Arrays.toString(values));
     }
 
     @Override
     public void publish(String event, Map<String, String> values) {
-      SignalLogger.df("tracker", "NullTracker - nothing published | %s | %s ", event, values);
+      SignalLogger.df("tracker", "NullTracker | %s | %s ", event, values);
     }
 
     @Override

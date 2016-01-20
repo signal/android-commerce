@@ -65,9 +65,9 @@ public class ProductsActivity extends BaseActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  private class RetrieveProductsTask extends AsyncTask<String, Void, List<Product>> {
+  private class RetrieveProductsTask extends AsyncTask<Void, Void, List<Product>> {
     @Override
-    protected List<Product> doInBackground(String ... id) {
+    protected List<Product> doInBackground(Void ... v) {
       List<Product> result = null;
       try {
         result = apiManager.getProducts(categoryId);
@@ -85,6 +85,7 @@ public class ProductsActivity extends BaseActivity {
         tracker.publish("load:products",
             "qty", String.valueOf(products.size()),
             "categoryId", categoryId);
+
         for (final Product product : products) {
           TextView view = new TextView(ProductsActivity.this);
           view.setText(product.getTitle());

@@ -5,14 +5,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -20,13 +21,15 @@ import android.widget.TextView;
 
 import co.signal.commerce.api.ApiManager;
 import co.signal.commerce.model.Category;
+import co.signal.commerce.view.CategoryView;
 import co.signal.util.SignalLogger;
 
 public class CategoriesActivity extends BaseActivity {
   public static final String CATEGORY_ID = "categoryId";
+  public static final String CATEGORY_TITLE = "categoryTitle";
 
   private LinearLayout categorylist;
-  private String categoryId;
+  private String categoryId = null;
 
   @Inject
   ApiManager apiManager;
@@ -52,7 +55,10 @@ public class CategoriesActivity extends BaseActivity {
 
     RetrieveCategoriesTask task = new RetrieveCategoriesTask();
     Bundle extras = getIntent().getExtras();
-    categoryId = extras==null ? null : extras.getString(CATEGORY_ID);
+    if (extras != null) {
+      categoryId = extras.getString(CATEGORY_ID);
+      toolbar.setTitle(extras.getString(CATEGORY_TITLE));
+    }
     task.execute();
   }
 
@@ -65,9 +71,9 @@ public class CategoriesActivity extends BaseActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  private class RetrieveCategoriesTask extends AsyncTask<String, Void, List<Category>> {
+  private class RetrieveCategoriesTask extends AsyncTask<Void, Void, List<Category>> {
     @Override
-    protected List<Category> doInBackground(String ... id) {
+    protected List<Category> doInBackground(Void ... v) {
       List<Category> result = null;
       try {
         if (categoryId == null) {
@@ -90,29 +96,34 @@ public class CategoriesActivity extends BaseActivity {
             "type", categoryId == null ? "main" : "sub",
             "qty", String.valueOf(categories.size()),
             "categoryId", categoryId);
+        LayoutInflater inflater = (LayoutInflater)CategoriesActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         for (final Category category : categories) {
-          TextView view = new TextView(CategoriesActivity.this);
-          view.setText(category.getName());
-          view.setPadding(20, 20, 20, 20);
-          view.setOnClickListener(new View.OnClickListener() {
+//          View categoryView = inflater.inflate(R.layout.category, categorylist, false);
+//          TextView title = (TextView)categoryView.findViewById(R.id.category_text);
+//          TextView letter = (TextView)categoryView.findViewById(R.id.category_letter);
+//          title.setText(category.getName());
+//          letter.setText(category.getName().substring(0, 1));
+          CategoryView categoryView = new CategoryView(CategoriesActivity.this, null);
+          categoryView.setTitleText(category.getName());
+
+          categoryView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
               Intent intent;
-              String event;
               if (category.getChildren() > 0) {
                 intent = new Intent(CategoriesActivity.this, CategoriesActivity.class);
-                intent.putExtra(CATEGORY_ID, category.getCategoryId());
-                event = "click:category";
+                tracker.publish("click:category", "type", "main");
               } else {
                 intent = new Intent(CategoriesActivity.this, ProductsActivity.class);
-                intent.putExtra(CATEGORY_ID, category.getCategoryId());
-                event = "click:products";
+                tracker.publish("click:category", "type", "sub", "categoryId", category.getCategoryId());
               }
+              intent.putExtra(CATEGORY_ID, category.getCategoryId());
+              intent.putExtra(CATEGORY_TITLE, category.getName());
               startActivity(intent);
-              tracker.publish(event, "categoryId", category.getCategoryId());
             }
           });
-          categorylist.addView(view);
+          categorylist.addView(categoryView);
         }
       }
     }
