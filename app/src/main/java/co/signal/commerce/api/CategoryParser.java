@@ -16,7 +16,7 @@ import co.signal.commerce.model.Category;
  *    "children_count": "0"
  *  }
  */
-public class CategoryParser extends BaseParser<Category> {
+public class CategoryParser implements BaseParser<Category> {
 
   public Category parse(JsonReader reader) throws IOException {
     Category.Builder builder = new Category.Builder();

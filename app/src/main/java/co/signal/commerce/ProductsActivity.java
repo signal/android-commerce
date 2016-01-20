@@ -21,6 +21,7 @@ import android.widget.TextView;
 import co.signal.commerce.api.ApiManager;
 import co.signal.commerce.model.Category;
 import co.signal.commerce.model.Product;
+import co.signal.commerce.view.ProductListView;
 import co.signal.util.SignalLogger;
 
 public class ProductsActivity extends BaseActivity {
@@ -28,6 +29,7 @@ public class ProductsActivity extends BaseActivity {
 
   private LinearLayout productList;
   private String categoryId;
+  private String categoryTitle;
 
   @Inject
   ApiManager apiManager;
@@ -53,7 +55,18 @@ public class ProductsActivity extends BaseActivity {
 
     RetrieveProductsTask task = new RetrieveProductsTask();
     categoryId = getIntent().getExtras().getString(CategoriesActivity.CATEGORY_ID);
+    categoryTitle = getIntent().getExtras().getString(CategoriesActivity.CATEGORY_TITLE);
     task.execute();
+  }
+
+  @Override
+  protected void onPostResume() {
+    super.onPostResume();
+
+    if (categoryTitle != null) {
+      Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+      toolbar.setTitle(categoryTitle);
+    }
   }
 
   @Override
@@ -87,9 +100,9 @@ public class ProductsActivity extends BaseActivity {
             "categoryId", categoryId);
 
         for (final Product product : products) {
-          TextView view = new TextView(ProductsActivity.this);
-          view.setText(product.getTitle());
-          view.setPadding(20, 20, 20, 20);
+          ProductListView view = new ProductListView(ProductsActivity.this);
+          view.setTitleText(product.getTitle());
+          view.setThumbnailUrl(product.getThumbnailUrl());
           view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -3,9 +3,14 @@ package co.signal.commerce.api;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import android.util.JsonReader;
 
 import co.signal.commerce.model.Product;
+import co.signal.commerce.module.ApplicationModule;
 
 /**
  * Parses the json for a Product object
@@ -33,7 +38,11 @@ import co.signal.commerce.model.Product;
  *   "image_url": "http://commerce.signal.ninja/media/catalog/product/cache/0/image/9df78eab33525d08d6e5fb8d27136e95/w/p/wpd010t.jpg"
  * }
  */
-public class ProductParser extends BaseParser<Product> {
+@Singleton
+public class ProductParser implements BaseParser<Product> {
+
+  @Inject @Named(ApplicationModule.NAME_THUMB_URL)
+  String thumbnailRootUrl;
 
   @Override
   public Product parse(JsonReader reader) throws IOException {
@@ -73,5 +82,9 @@ public class ProductParser extends BaseParser<Product> {
     }
     reader.endObject();
     return builder.build();
+  }
+
+  protected String getThumbnailUrl(String imageUrl, int size) {
+    return thumbnailRootUrl + size + "/" + imageUrl;
   }
 }

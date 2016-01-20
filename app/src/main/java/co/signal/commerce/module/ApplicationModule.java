@@ -63,12 +63,8 @@ public class ApplicationModule {
   }
 
   @Provides @Singleton
-  public ProductParser provideProductParser() {
-    return new ProductParser();
-  }
-
-  @Provides @Singleton
   public CategoryParser provideCategoryParser() {
+    // Need to create manually since there is nothing injected on this class
     return new CategoryParser();
   }
 

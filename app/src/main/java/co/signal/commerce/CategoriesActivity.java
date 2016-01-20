@@ -30,6 +30,7 @@ public class CategoriesActivity extends BaseActivity {
 
   private LinearLayout categorylist;
   private String categoryId = null;
+  private String categoryTitle;
 
   @Inject
   ApiManager apiManager;
@@ -57,7 +58,7 @@ public class CategoriesActivity extends BaseActivity {
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
       categoryId = extras.getString(CATEGORY_ID);
-      toolbar.setTitle(extras.getString(CATEGORY_TITLE));
+      categoryTitle = extras.getString(CATEGORY_TITLE);
     }
     task.execute();
   }
@@ -69,6 +70,16 @@ public class CategoriesActivity extends BaseActivity {
       onBackPressed();
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  protected void onPostResume() {
+    super.onPostResume();
+
+    if (categoryTitle != null) {
+      Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+      toolbar.setTitle(categoryTitle);
+    }
   }
 
   private class RetrieveCategoriesTask extends AsyncTask<Void, Void, List<Category>> {
@@ -99,11 +110,6 @@ public class CategoriesActivity extends BaseActivity {
         LayoutInflater inflater = (LayoutInflater)CategoriesActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (final Category category : categories) {
-//          View categoryView = inflater.inflate(R.layout.category, categorylist, false);
-//          TextView title = (TextView)categoryView.findViewById(R.id.category_text);
-//          TextView letter = (TextView)categoryView.findViewById(R.id.category_letter);
-//          title.setText(category.getName());
-//          letter.setText(category.getName().substring(0, 1));
           CategoryView categoryView = new CategoryView(CategoriesActivity.this, null);
           categoryView.setTitleText(category.getName());
 

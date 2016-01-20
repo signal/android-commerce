@@ -2,8 +2,6 @@ package co.signal.commerce.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,7 +18,7 @@ public class CategoryView extends LinearLayout {
 
   public CategoryView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    inflate(context, R.layout.category, this);
+    inflate(context, R.layout.category_list_item, this);
     letterText = (TextView)findViewById(R.id.category_letter);
     titleText = (TextView)findViewById(R.id.category_text);
   }

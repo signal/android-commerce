@@ -7,13 +7,9 @@ import javax.inject.Named;
 
 import android.util.JsonReader;
 
-public abstract class BaseParser<T> {
-  @Inject @Named("THUMB_URL")
-  String thumbnailRootUrl;
+import co.signal.commerce.module.ApplicationModule;
 
-  public abstract T parse(JsonReader reader) throws IOException;
+public interface  BaseParser<T> {
 
-  protected String getThumbnailUrl(String imageUrl, int size) {
-    return thumbnailRootUrl + "/" + size + "/" + imageUrl;
-  }
+  T parse(JsonReader reader) throws IOException;
 }

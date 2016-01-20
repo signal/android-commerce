@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import android.util.JsonReader;
 
@@ -11,7 +12,8 @@ import com.google.common.collect.ImmutableList;
 
 import co.signal.commerce.model.Category;
 
-public class CategoryListParser extends BaseParser<List<Category>> {
+@Singleton
+public class CategoryListParser implements BaseParser<List<Category>> {
   @Inject
   CategoryParser categoryParser;
 
