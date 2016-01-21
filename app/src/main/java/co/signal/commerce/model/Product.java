@@ -16,6 +16,7 @@ public class Product {
   private final String finalPrice;
   private final String finalPriceWithTax;
   private final boolean onSale;
+  private final boolean inStock;
 
   private Product(Builder builder) {
     this.productId = builder.productId;
@@ -30,6 +31,7 @@ public class Product {
     this.finalPrice = builder.finalPrice;
     this.finalPriceWithTax = builder.finalPriceWithTax;
     this.onSale = builder.onSale;
+    this.inStock = builder.inStock;
   }
 
   public String getProductId() {
@@ -80,6 +82,10 @@ public class Product {
     return onSale;
   }
 
+  public boolean isInStock() {
+    return inStock;
+  }
+
   public static final class Builder {
     private String productId;
     private String sku;
@@ -92,7 +98,8 @@ public class Product {
     private String regularPriceWithTax;
     private String finalPrice;
     private String finalPriceWithTax;
-    private boolean onSale;
+    private boolean onSale = false;
+    private boolean inStock = false;
 
     public Builder productId(String productId) {
       this.productId = productId;
@@ -151,6 +158,11 @@ public class Product {
 
     public Builder onSale(boolean onSale) {
       this.onSale = onSale;
+      return this;
+    }
+
+    public Builder inStock(boolean inStock) {
+      this.inStock = inStock;
       return this;
     }
 

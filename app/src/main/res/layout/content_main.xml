@@ -14,43 +14,44 @@
     tools:showIn="@layout/activity_main">
 
     <ImageView
+        android:id="@+id/img_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/img_logo"
         android:src="@drawable/boutique111b"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"/>
     <ImageView
+        android:id="@+id/img_signal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/img_signal"
         android:src="@drawable/signal_sm"
-        android:layout_marginBottom="81dp"
+        android:layout_marginBottom="5dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
     <TextView
+        android:id="@+id/label_powered_by"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Powered by"
-        android:id="@+id/label_powered_by"
+        android:text="@string/powered_by"
         android:layout_alignTop="@+id/img_signal"
         android:layout_alignLeft="@+id/img_signal"
         android:layout_alignStart="@+id/img_signal"/>
-    <TextView
+    <Button
+        android:id="@+id/btn_start_shopping"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Loading ..."
-        android:id="@+id/label_loading"
+        android:text="@string/start_shopping"
+        android:textColor="@color/colorWhite"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:hyphenationFrequency="none"/>
+        android:background="@drawable/button_red"
+        android:layout_centerHorizontal="true"/>
 
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:text="v1.0"
               android:id="@+id/label_version"
-              android:layout_below="@+id/img_logo" android:layout_alignRight="@+id/img_signal"
+              android:layout_below="@+id/img_logo"
+              android:layout_alignRight="@+id/img_signal"
               android:layout_alignEnd="@+id/img_signal"/>
 </RelativeLayout>

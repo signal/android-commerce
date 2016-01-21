@@ -8,6 +8,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import android.util.JsonReader;
+import android.util.JsonToken;
 
 import co.signal.commerce.model.Product;
 import co.signal.commerce.module.ApplicationModule;
@@ -35,6 +36,7 @@ import co.signal.commerce.module.ApplicationModule;
  *   "final_price_with_tax": 265.21,
  *   "final_price_without_tax": 245,
  *   "is_saleable": false,
+ *   "is_in_stock": false,
  *   "image_url": "http://commerce.signal.ninja/media/catalog/product/cache/0/image/9df78eab33525d08d6e5fb8d27136e95/w/p/wpd010t.jpg"
  * }
  */
@@ -71,7 +73,18 @@ public class ProductParser implements BaseParser<Product> {
       } else if ("final_price_with_tax".equals(key)) {
         builder.finalPriceWithTax(formatter.format(reader.nextDouble()));
       } else if ("is_saleable".equals(key)) {
-        builder.onSale(reader.nextBoolean());
+        // Magento sends boolean for False, and a "1" string for True
+        if (reader.peek() == JsonToken.BOOLEAN) {
+          builder.onSale(reader.nextBoolean());
+        } else {
+          builder.onSale("1".equals(reader.nextString()));
+        }
+      } else if ("is_in_stock".equals(key)) {
+        if (reader.peek() == JsonToken.BOOLEAN) {
+          builder.inStock(reader.nextBoolean());
+        } else {
+          builder.inStock("1".equals(reader.nextString()));
+        }
       } else if ("image_url".equals(key)) {
         String url = reader.nextString();
         builder.imageUrl(url);
