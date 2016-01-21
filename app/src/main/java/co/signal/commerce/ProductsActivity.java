@@ -25,7 +25,8 @@ import co.signal.commerce.view.ProductListView;
 import co.signal.util.SignalLogger;
 
 public class ProductsActivity extends BaseActivity {
-  private static final String PRODUCT_ID = "productId";
+  public static final String PRODUCT_ID = "productId";
+  public static final String PRODUCT_TITLE = "productTitle";
 
   private LinearLayout productList;
   private String categoryId;
@@ -69,13 +70,23 @@ public class ProductsActivity extends BaseActivity {
     }
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    int id = item.getItemId();
-    if (id == android.R.id.home) {
-      onBackPressed();
+  private void drawProducts(List<Product> products) {
+    for (final Product product : products) {
+      ProductListView view = new ProductListView(ProductsActivity.this);
+      view.setTitleText(product.getTitle());
+      view.setThumbnailUrl(product.getThumbnailUrl());
+      view.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          Intent intent = new Intent(ProductsActivity.this, ProductDetailsActivity.class);
+          intent.putExtra(PRODUCT_ID, product.getProductId());
+          intent.putExtra(PRODUCT_TITLE, product.getTitle());
+          startActivity(intent);
+          tracker.publish("click:product", "productId", product.getProductId());
+        }
+      });
+      productList.addView(view);
     }
-    return super.onOptionsItemSelected(item);
   }
 
   private class RetrieveProductsTask extends AsyncTask<Void, Void, List<Product>> {
@@ -99,21 +110,7 @@ public class ProductsActivity extends BaseActivity {
             "qty", String.valueOf(products.size()),
             "categoryId", categoryId);
 
-        for (final Product product : products) {
-          ProductListView view = new ProductListView(ProductsActivity.this);
-          view.setTitleText(product.getTitle());
-          view.setThumbnailUrl(product.getThumbnailUrl());
-          view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              Intent intent = new Intent(ProductsActivity.this, ProductsActivity.class);
-              intent.putExtra(PRODUCT_ID, product.getProductId());
-              startActivity(intent);
-              tracker.publish("click:product", "productId", product.getProductId());
-            }
-          });
-          productList.addView(view);
-        }
+        drawProducts(products);
       }
     }
   }

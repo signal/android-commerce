@@ -33,21 +33,27 @@ public class ApiManager {
   ProductListParser productListParser;
   @Inject
   ProductParser productParser;
+  @Inject
+  ProductImageUrlParser productUrlParser;
 
   public List<Category> getMainCategories() throws IOException {
-    return callServer(categoryListParser, buildUrl("categories", null, null, null));
+    return callServer(categoryListParser, buildUrl("categories", null, null, null, null));
   }
 
   public List<Category> getSubCategories(String categoryId) throws IOException {
-    return callServer(categoryListParser, buildUrl("categories", categoryId, null, null));
+    return callServer(categoryListParser, buildUrl("categories", null, categoryId, null, null));
   }
 
   public List<Product> getProducts(String categoryId) throws IOException {
-    return callServer(productListParser, buildUrl("products", null, "category_id", categoryId));
+    return callServer(productListParser, buildUrl("products", null, null, "category_id", categoryId));
   }
 
   public Product getProductDetails(String productId) throws IOException {
-    return callServer(productParser, buildUrl("products", productId, null, null));
+    return callServer(productParser, buildUrl("products", null, productId, null, null));
+  }
+
+  public List<String> getProductImages(String productId) throws IOException {
+    return callServer(productUrlParser, buildUrl("products", "images", productId, null, null));
   }
 
   /**
@@ -55,14 +61,19 @@ public class ApiManager {
    *
    * @param resource The REST resource to call
    * @param key The resource key, if retrieving a single entity
+   * @param subResource The child resource of a resource
    * @param param The query param to add to the URL
    * @param value The value of the query param
    */
-  private URL buildUrl(String resource, @Nullable String key, @Nullable String param,
+  private URL buildUrl(String resource, @Nullable String subResource,
+                       @Nullable String key, @Nullable String param,
                        @Nullable String value) throws IOException {
     StringBuilder fullUrl = new StringBuilder(baseUrl).append(resource);
     if (!TextUtils.isEmpty(key)) {
       fullUrl.append('/').append(key);
+    }
+    if (!TextUtils.isEmpty(subResource)) {
+      fullUrl.append('/').append(subResource);
     }
     if (!TextUtils.isEmpty(param) && !TextUtils.isEmpty(value)) {
       fullUrl.append('?').append(param).append('=').append(value);

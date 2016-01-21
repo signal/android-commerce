@@ -13,10 +13,11 @@ import android.text.TextUtils;
 
 import co.signal.commerce.CategoriesActivity;
 import co.signal.commerce.MainActivity;
+import co.signal.commerce.ProductDetailsActivity;
 import co.signal.commerce.ProductsActivity;
 import co.signal.commerce.SettingsActivity;
 import co.signal.commerce.api.CategoryParser;
-import co.signal.commerce.api.ProductParser;
+import co.signal.commerce.api.ProductImageUrlParser;
 import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.SignalInc;
 import co.signal.serverdirect.api.StandardField;
@@ -31,6 +32,7 @@ import dagger.Provides;
     MainActivity.class,
     CategoriesActivity.class,
     ProductsActivity.class,
+    ProductDetailsActivity.class,
     SettingsActivity.class
   }
 )
@@ -64,14 +66,20 @@ public class ApplicationModule {
 
   @Provides @Singleton
   public CategoryParser provideCategoryParser() {
-    // Need to create manually since there is nothing injected on this class
+    // Need to create manually since there is nothing injected in this class
     return new CategoryParser();
+  }
+
+  @Provides @Singleton
+  public ProductImageUrlParser provideImageUrlParser() {
+    // Need to create manually since there is nothing injected in this class
+    return new ProductImageUrlParser();
   }
 
   @Provides @Named(NAME_SITE_ID)
   public String provideSiteId() {
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-    return preferences.getString("siteid", "NotSet"); // Set it SettingsActivity
+    return preferences.getString("siteid", "NotSet"); // Set in SettingsActivity
   }
 
   @Provides @Singleton
