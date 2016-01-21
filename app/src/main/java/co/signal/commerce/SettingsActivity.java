@@ -2,6 +2,7 @@ package co.signal.commerce;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,13 +12,18 @@ import android.preference.PreferenceActivity;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.MenuItem;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import com.google.common.collect.ImmutableList;
+
 import co.signal.commerce.module.ApplicationModule;
+import co.signal.serverdirect.api.SignalConfig;
+import co.signal.serverdirect.api.StandardField;
 import co.signal.serverdirect.api.Tracker;
 
 /**
@@ -78,63 +84,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
   }
 
   /**
-   * A preference value change listener that updates the preference's summary
-   * to reflect its new value.
-   */
-  private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object value) {
-      String stringValue = value.toString();
-
-      if (preference instanceof ListPreference) {
-        // For list preferences, look up the correct display value in
-        // the preference's 'entries' list.
-        ListPreference listPreference = (ListPreference) preference;
-        int index = listPreference.findIndexOfValue(stringValue);
-
-        // Set the summary to reflect the new value.
-        preference.setSummary(
-            index >= 0
-                ? listPreference.getEntries()[index]
-                : null);
-
-      } else {
-        // For all other preferences, set the summary to the value's
-        // simple string representation.
-        preference.setSummary(stringValue);
-      }
-      return true;
-    }
-  };
-
-  /**
    * {@inheritDoc}
    */
   @Override
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public void onBuildHeaders(List<Header> target) {
     loadHeadersFromResource(R.xml.pref_headers, target);
-  }
-
-  /**
-   * Binds a preference's summary to its value. More specifically, when the
-   * preference's value is changed, its summary (line of text below the
-   * preference title) is updated to reflect the value. The summary is also
-   * immediately updated upon calling this method. The exact display format is
-   * dependent on the type of preference.
-   *
-   * @see #sBindPreferenceSummaryToValueListener
-   */
-  private static void bindPreferenceSummaryToValue(Preference preference) {
-    // Set the listener to watch for value changes.
-    preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-    // Trigger the listener immediately with the preference's
-    // current value.
-    sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-        PreferenceManager
-            .getDefaultSharedPreferences(preference.getContext())
-            .getString(preference.getKey(), ""));
   }
 
   @Override
@@ -164,17 +119,42 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
    */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class GeneralPreferenceFragment extends PreferenceFragment {
+    @Inject
+    SignalConfig config;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+      ((CommerceApplication)getActivity().getApplication()).inject(this);
+
       addPreferencesFromResource(R.xml.pref_general);
       setHasOptionsMenu(true);
 
-      // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-      // to their values. When their values change, their summaries are
-      // updated to reflect the new value, per the Android Design
-      // guidelines.
-      bindPreferenceSummaryToValue(findPreference(ApplicationModule.PREF_SITE_ID));
+      attachListenerAndUpdateSummary(findPreference("siteid"), new SummaryUpdateListener() {
+        @Override
+        public void updateConfig(Preference preference, Object value) {
+          // noop for siteid
+        }
+      });
+
+      findPreference("enable_lifecycle").setOnPreferenceChangeListener(new SignalConfigUpdateListener() {
+        @Override
+        void updateConfig(Preference preference, Object value) {
+          config.setLifecycleEventsEnabled((Boolean) value);
+        }
+      });
+      findPreference("enable_background").setOnPreferenceChangeListener(new SignalConfigUpdateListener() {
+        @Override
+        void updateConfig(Preference preference, Object value) {
+          config.setPublishInBackground((Boolean) value);
+        }
+      });
+      findPreference("enable_wifi").setOnPreferenceChangeListener(new SignalConfigUpdateListener() {
+        @Override
+        void updateConfig(Preference preference, Object value) {
+          config.setNetworkWifiOnly((Boolean) value);
+        }
+      });
     }
   }
 
@@ -184,11 +164,29 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
    */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class LoggingPreferenceFragment extends PreferenceFragment {
+    @Inject
+    SignalConfig config;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+      ((CommerceApplication)getActivity().getApplication()).inject(this);
+
       addPreferencesFromResource(R.xml.pref_logging);
       setHasOptionsMenu(true);
+
+      findPreference("debug_enabled").setOnPreferenceChangeListener(new SignalConfigUpdateListener() {
+        @Override
+        void updateConfig(Preference preference, Object value) {
+          config.setDebug((Boolean) value);
+        }
+      });
+      findPreference("verbose_enabled").setOnPreferenceChangeListener(new SignalConfigUpdateListener() {
+        @Override
+        void updateConfig(Preference preference, Object value) {
+          config.setVerbose((Boolean) value);
+        }
+      });
     }
   }
 
@@ -198,23 +196,59 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
    */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class ControlsPreferenceFragment extends PreferenceFragment {
+    @Inject
+    SignalConfig config;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+      ((CommerceApplication)getActivity().getApplication()).inject(this);
+
       addPreferencesFromResource(R.xml.pref_controls);
       setHasOptionsMenu(true);
 
-      // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-      // to their values. When their values change, their summaries are
-      // updated to reflect the new value, per the Android Design
-      // guidelines.
-      bindPreferenceSummaryToValue(findPreference("msg_expiration"));
-      bindPreferenceSummaryToValue(findPreference("msg_max_queued"));
-      bindPreferenceSummaryToValue(findPreference("msg_retry_count"));
-      bindPreferenceSummaryToValue(findPreference("battery_percentage"));
-      bindPreferenceSummaryToValue(findPreference("dispatch_interval"));
-      bindPreferenceSummaryToValue(findPreference("socket_connect_to"));
-      bindPreferenceSummaryToValue(findPreference("socket_read_to"));
+      attachListenerAndUpdateSummary(findPreference("msg_expiration"), new SummaryUpdateListener() {
+        @Override
+        public void updateConfig(Preference preference, Object value) {
+          config.setMessageExpiration(Long.parseLong(value.toString()));
+        }
+      });
+      attachListenerAndUpdateSummary(findPreference("msg_max_queued"), new SummaryUpdateListener() {
+        @Override
+        public void updateConfig(Preference preference, Object value) {
+          config.setMaxQueuedMessages(Integer.parseInt(value.toString()));
+        }
+      });
+      attachListenerAndUpdateSummary(findPreference("msg_retry_count"), new SummaryUpdateListener() {
+        @Override
+        public void updateConfig(Preference preference, Object value) {
+          config.setMessageRetryCount(Integer.parseInt(value.toString()));
+        }
+      });
+      attachListenerAndUpdateSummary(findPreference("battery_percentage"), new SummaryUpdateListener() {
+        @Override
+        public void updateConfig(Preference preference, Object value) {
+          config.setBatteryPercentage(Integer.parseInt(value.toString()));
+        }
+      });
+      attachListenerAndUpdateSummary(findPreference("dispatch_interval"), new SummaryUpdateListener() {
+        @Override
+        public void updateConfig(Preference preference, Object value) {
+          config.setDispatchInterval(Long.parseLong(value.toString()));
+        }
+      });
+      attachListenerAndUpdateSummary(findPreference("socket_connect_to"), new SummaryUpdateListener() {
+        @Override
+        public void updateConfig(Preference preference, Object value) {
+          config.setSocketConnectTimeout(Long.parseLong(value.toString()));
+        }
+      });
+      attachListenerAndUpdateSummary(findPreference("socket_read_to"), new SummaryUpdateListener() {
+        @Override
+        public void updateConfig(Preference preference, Object value) {
+          config.setSocketReadTimeout(Long.parseLong(value.toString()));
+        }
+      });
     }
   }
 
@@ -224,19 +258,106 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
    */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class StandardFieldPreferenceFragment extends PreferenceFragment {
+    @Inject
+    SignalConfig config;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+      ((CommerceApplication)getActivity().getApplication()).inject(this);
+
       addPreferencesFromResource(R.xml.pref_std_fields);
       setHasOptionsMenu(true);
 
-      // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-      // to their values. When their values change, their summaries are
-      // updated to reflect the new value, per the Android Design
-      // guidelines.
-//      bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
-    }
+      Preference.OnPreferenceChangeListener listener = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+          List<StandardField> empty = ImmutableList.of();
+          SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(preference.getContext());
 
+          Log.d("stdfld", "--- clear ---");
+          config.setStandardFields(empty);
+          for (StandardField stdFld : StandardField.values()) {
+            String key = "pref_" + stdFld.getName();
+            if (preference.getKey().equals(key)) {
+              // The current checkbox will not be set in prefs yet, so check the new value
+              if ((Boolean)newValue) {
+                Log.d("stdfld-c", stdFld.toString());
+                config.addStandardField(stdFld);
+              }
+            } else if (prefs.getBoolean(key, false)) {
+              Log.d("stdfld-o", stdFld.toString());
+              config.addStandardField(stdFld);
+            }
+          }
+          return true;
+        }
+      };
+
+      for (StandardField stdFld : StandardField.values()) {
+        Preference preference = findPreference("pref_" + stdFld.getName());
+        if (preference != null) {
+          preference.setOnPreferenceChangeListener(listener);
+        }
+      }
+    }
   }
 
+  /**
+   * Binds a preference's summary to its value. More specifically, when the
+   * preference's value is changed, its summary (line of text below the
+   * preference title) is updated to reflect the value. The summary is also
+   * immediately updated upon calling this method. The exact display format is
+   * dependent on the type of preference.
+   */
+  private static void attachListenerAndUpdateSummary(Preference preference, SummaryUpdateListener listener) {
+    // Set the listener to watch for value changes.
+    preference.setOnPreferenceChangeListener(listener);
+
+    // Trigger the listener immediately with the preference's current value.
+    listener.updateSummary(preference,
+        PreferenceManager.getDefaultSharedPreferences(preference.getContext())
+            .getString(preference.getKey(), ""));
+  }
+
+  private static abstract class SignalConfigUpdateListener implements Preference.OnPreferenceChangeListener {
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object value) {
+      updateConfig(preference, value);
+      return true;
+    }
+
+    abstract void updateConfig(Preference preference, Object value);
+  }
+
+    /**
+   * A preference value change listener that updates the preference's summary
+   * to reflect its new value.
+   */
+  private static abstract class SummaryUpdateListener extends SignalConfigUpdateListener {
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object value) {
+      updateSummary(preference, value);
+      return super.onPreferenceChange(preference, value);
+    }
+
+    void updateSummary(Preference preference, Object value) {
+      String stringValue = value.toString();
+      if (preference instanceof ListPreference) {
+        // For list preferences, look up the correct display value in
+        // the preference's 'entries' list.
+        ListPreference listPreference = (ListPreference) preference;
+        int index = listPreference.findIndexOfValue(stringValue);
+
+        // Set the summary to reflect the new value.
+        preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
+
+      } else {
+        // For all other preferences, set the summary to the value's
+        // simple string representation.
+        preference.setSummary(stringValue);
+      }
+    }
+  }
 }

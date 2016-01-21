@@ -33,11 +33,14 @@ import dagger.Provides;
     CategoriesActivity.class,
     ProductsActivity.class,
     ProductDetailsActivity.class,
-    SettingsActivity.class
+    SettingsActivity.class,
+    SettingsActivity.GeneralPreferenceFragment.class,
+    SettingsActivity.ControlsPreferenceFragment.class,
+    SettingsActivity.StandardFieldPreferenceFragment.class,
+    SettingsActivity.LoggingPreferenceFragment.class
   }
 )
 public class ApplicationModule {
-
   // Named strings for injection
   public static final String NAME_SITE_ID = "SITE_ID";
   public static final String NAME_API_URL = "API_URL";
@@ -46,12 +49,16 @@ public class ApplicationModule {
   // Preference keys
   public static final String PREF_SITE_ID = "siteid";
 
+  // Static URL
   private static final String BOUTIQUE_111_URL = "http://commerce.signal.ninja/api/rest/";
   private static final String RE_THUMB_URL = "http://api.rethumb.com/v1/square/";
+
   private Context appContext;
+  private SharedPreferences preferences;
 
   public ApplicationModule(Context appContext) {
     this.appContext = appContext;
+    preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
   }
 
   @Provides @Singleton @Named(NAME_API_URL)
@@ -78,27 +85,27 @@ public class ApplicationModule {
 
   @Provides @Named(NAME_SITE_ID)
   public String provideSiteId() {
-    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-    return preferences.getString("siteid", "NotSet"); // Set in SettingsActivity
+    return preferences.getString(PREF_SITE_ID, "NotSet"); // Set in SettingsActivity
   }
 
   @Provides @Singleton
   public SignalConfig provideSignalConfig(@Named("SITE_ID") String siteId) {
     SignalConfig config = SignalInc.createConfig(appContext)
         .setEndpoint("https://mobile-stage.signal.ninja/mobile")
-        .setDebug(true)
-        .setVerbose(true)
-        .setBatteryPercentage(15)
-        .setPublishInBackground(true)
-        .setMessageRetryCount(3)
-        .setDispatchInterval(20)
-        .setMaxQueuedMessages(100)
-        .setMessageExpiration(3600)
-        .setSocketConnectTimeout(10000)
-        .setSocketReadTimeout(5000)
-        .setNetworkWifiOnly(false);
+        .setMaxQueuedMessages(getPrefInt("msg_max_queued", 100))
+        .setMessageExpiration(getPrefLong("msg_expiration", 3600))
+        .setMessageRetryCount(getPrefInt("msg_retry_count", 3))
+        .setDispatchInterval(getPrefLong("dispatch_interval", 20))
+        .setBatteryPercentage(getPrefInt("battery_percentage", 15))
+        .setSocketConnectTimeout(getPrefLong("socket_connect_to", 10000))
+        .setSocketReadTimeout(getPrefLong("socket_read_to", 5000))
+        .setPublishInBackground(preferences.getBoolean("enable_background", false))
+        .setNetworkWifiOnly(preferences.getBoolean("enable_wifi", false))
+        .setLifecycleEventsEnabled(preferences.getBoolean("enable_lifecycle", true))
+        .setDebug(preferences.getBoolean("debug_enabled", false))
+        .setVerbose(preferences.getBoolean("verbose_enabled", false));
 
-    if (TextUtils.isEmpty(siteId) || "NotSet".equals(siteId)) {
+    if (TextUtils.isEmpty(siteId) || "notset".equals(siteId.toLowerCase())) {
       config.setLifecycleEventsEnabled(false);
     }
     config.setStandardFields(StandardField.Timezone, StandardField.ScreenOrientation,
@@ -124,10 +131,20 @@ public class ApplicationModule {
     // This is not typical of a real app. This demo app allows the config and SiteId
     // to be changed dynamically, so all the Signal objects are discretely provided.
     // Normally, all setup would be in this one method and provide the Tracker as a singleton.
-    if (TextUtils.isEmpty(siteId) || "NotSet".equals(siteId)) {
+    if (TextUtils.isEmpty(siteId) || "notset".equals(siteId.toLowerCase())) {
       return NULL_TRACKER;
     }
     return signalInc.getTracker(siteId);
+  }
+
+  private long getPrefLong(String key, long defaultValue) {
+    // Stored as a string via the settings pages, so need to convert back and forth
+    return Long.parseLong(preferences.getString(key, String.valueOf(defaultValue)));
+  }
+
+  private int getPrefInt(String key, int defaultValue) {
+    // Stored as a string via the settings pages, so need to convert back and forth
+    return Integer.parseInt(preferences.getString(key, String.valueOf(defaultValue)));
   }
 
   /**

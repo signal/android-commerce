@@ -26,6 +26,7 @@
         <item>12 hours</item>
         <item>1 day</item>
         <item>1 week</item>
+        <item>1 year</item>
     </string-array>
     <string-array name="pref_msg_expiration_values">
         <item>60</item>
@@ -36,6 +37,7 @@
         <item>43200</item>
         <item>86400</item>
         <item>604800</item>
+        <item>31536000</item>
     </string-array>
 
     <string name="pref_title_msg_retry_count">Message Retry Count</string>
@@ -100,36 +102,26 @@
 
     <string name="pref_header_user_fields">User Fields</string>
     <string name="pref_title_custom_fields">Custom Fields</string>
+
     <string name="pref_title_standard_fields">Standard Fields</string>
-    <string-array name="pref_standard_fields_values">
-        <item>ApplicationName</item>
-        <item>ApplicationVersion</item>
-        <item>ScreenResolution</item>
-        <item>ScreenColor</item>
-        <item>UserLanguage</item>
-        <item>ScreenOrientation</item>
-        <item>Timezone</item>
-        <item>OsVersion</item>
-        <item>Carrier</item>
-        <item>DeviceInfo</item>
-        <item>ActiveNetwork</item>
-        <item>DeviceIdType</item>
-        <item>DeviceId</item>
-        <!--<item>DeviceIdMD5</item>-->
-        <!--<item>DeviceIdSHA1</item>-->
-        <!--<item>DeviceIdSHA256</item>-->
-        <item>AndroidId</item>
-        <!--<item>AndroidIdMD5</item>-->
-        <!--<item>AndroidIdSHA1</item>-->
-        <!--<item>AndroidIdSHA256</item>-->
-    </string-array>
-    <string-array name="pref_standard_fields_defaults">
-        <item>ApplicationName</item>
-        <item>ApplicationVersion</item>
-        <item>OsVersion</item>
-        <item>DeviceInfo</item>
-        <item>UserLanguage</item>
-    </string-array>
+    <string name="pref_title_sf_app_name">ApplicationName</string>
+    <string name="pref_title_sf_app_ver">ApplicationVersion</string>
+    <string name="pref_title_sf_scr_res">ScreenResolution</string>
+    <string name="pref_title_sf_scr_col">ScreenColor</string>
+    <string name="pref_title_sf_user_language">UserLanguage</string>
+    <string name="pref_title_sf_scr_ori">ScreenOrientation</string>
+    <string name="pref_title_sf_timezone">Timezone</string>
+    <string name="pref_title_sf_os_ver">OsVersion</string>
+    <string name="pref_title_sf_carrier">Carrier</string>
+    <string name="pref_title_sf_dev_info">DeviceInfo</string>
+    <string name="pref_title_sf_act_net">ActiveNetwork</string>
+    <string name="pref_title_sf_dev_type">DeviceIdType</string>
+    <string name="pref_title_sf_dev_id">DeviceId</string>
+    <string name="pref_title_sf_dev_id_md5">DeviceIdMD5</string>
+    <string name="pref_title_sf_dev_id_sha1">DeviceIdSHA1</string>
+    <string name="pref_title_sf_dev_id_sha2">DeviceIdSHA256</string>
+    <string name="pref_title_sf_and_id">AndroidId</string>
+
     <string name="title_activity_categories">boutique 111</string>
     <string name="title_activity_products">Products</string>
 </resources>

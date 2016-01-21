@@ -15,7 +15,7 @@
     <header
         android:fragment="co.signal.commerce.SettingsActivity$StandardFieldPreferenceFragment"
         android:icon="@drawable/ic_sync_black_24dp"
-        android:title="@string/pref_header_user_fields"/>
+        android:title="@string/pref_title_standard_fields"/>
 
     <header
         android:fragment="co.signal.commerce.SettingsActivity$LoggingPreferenceFragment"
