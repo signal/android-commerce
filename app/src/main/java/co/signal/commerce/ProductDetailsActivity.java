@@ -1,6 +1,5 @@
 package co.signal.commerce;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -12,8 +11,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 
@@ -69,7 +70,7 @@ public class ProductDetailsActivity extends BaseActivity {
   private void drawView(Product product) {
     aq = new AQuery(this);
 
-    aq.id(R.id.product_image).image(product.getImageUrl(), false, true);
+    aq.id(R.id.product_image).image(product.getImageUrl(), false, true, 200, 0);
     aq.id(R.id.product_title).text(product.getTitle());
     aq.id(R.id.product_description).text(product.getDescription());
     aq.id(R.id.product_details).text(product.getDetails());
@@ -77,13 +78,17 @@ public class ProductDetailsActivity extends BaseActivity {
 
   private void drawImages(List<String> imageUrls) {
     boolean first = true;
+    ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
+        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
     for (String url : imageUrls) {
       if (first) {
         // The first image is the same as the one in the Product class
         first = false;
       } else {
         ImageView img = new ImageView(this);
-        aq.id(img).image(url, false, true);
+        img.setLayoutParams(layoutParams);
+        aq.id(img).image(url, false, true, 200, 0);
         productImages.addView(img);
       }
     }
@@ -95,7 +100,7 @@ public class ProductDetailsActivity extends BaseActivity {
       Product result = null;
       try {
         result = apiManager.getProductDetails(productId);
-      } catch (IOException e) {
+      } catch (Exception e) {
         Log.e("product", "Retrieve Product Details Failed", e);
       }
       return result;
@@ -129,15 +134,19 @@ public class ProductDetailsActivity extends BaseActivity {
     @Override
     protected void onPostExecute(List<String> imageUrls) {
       super.onPostExecute(imageUrls);
-      if (imageUrls != null) {
-        SignalLogger.df("product", "Retrieved %d images from %s (%s)", imageUrls.size(), productId, productTitle);
-        tracker.publish("load:productImages",
-            "productId", productId,
-            "qty", String.valueOf(imageUrls.size()));
-        drawImages(imageUrls);
-      } else {
-        //TODO: toast
+      if (imageUrls == null) {
+        Toast.makeText(ProductDetailsActivity.this,
+            "Failed to load Product Details... please try again.",
+            Toast.LENGTH_LONG)
+            .show();
+        return;
       }
+
+      SignalLogger.df("product", "Retrieved %d images from %s (%s)", imageUrls.size(), productId, productTitle);
+      tracker.publish("load:productImages",
+          "productId", productId,
+          "qty", String.valueOf(imageUrls.size()));
+      drawImages(imageUrls);
     }
   }
 }

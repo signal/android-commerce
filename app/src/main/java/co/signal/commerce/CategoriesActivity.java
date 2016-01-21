@@ -1,11 +1,9 @@
 package co.signal.commerce;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,11 +11,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import co.signal.commerce.api.ApiManager;
 import co.signal.commerce.model.Category;
@@ -83,7 +79,7 @@ public class CategoriesActivity extends BaseActivity {
         } else {
           result = apiManager.getSubCategories(categoryId);
         }
-      } catch (IOException e) {
+      } catch (Exception e) {
         Log.e("commerce", "Retrieve Categories Failed for:" + categoryId, e);
       }
       return result;
@@ -92,36 +88,41 @@ public class CategoriesActivity extends BaseActivity {
     @Override
     protected void onPostExecute(List<Category> categories) {
       super.onPostExecute(categories);
-      if (categories != null) {
-        SignalLogger.df("category", "Retrieved %d categories from %s", categories.size(), categoryId);
-        tracker.publish("load:categories",
-            "type", categoryId == null ? "main" : "sub",
-            "qty", String.valueOf(categories.size()),
-            "categoryId", categoryId);
-        LayoutInflater inflater = (LayoutInflater)CategoriesActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      if (categories == null) {
+        Toast.makeText(CategoriesActivity.this,
+            "No categories were found... please try again.",
+            Toast.LENGTH_LONG)
+            .show();
+        return;
+      }
 
-        for (final Category category : categories) {
-          CategoryView categoryView = new CategoryView(CategoriesActivity.this, null);
-          categoryView.setTitleText(category.getName());
+      SignalLogger.df("category", "Retrieved %d categories from %s", categories.size(), categoryId);
+      tracker.publish("load:categories",
+          "type", categoryId == null ? "main" : "sub",
+          "qty", String.valueOf(categories.size()),
+          "categoryId", categoryId);
 
-          categoryView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              Intent intent;
-              if (category.getChildren() > 0) {
-                intent = new Intent(CategoriesActivity.this, CategoriesActivity.class);
-                tracker.publish("click:category", "type", "main");
-              } else {
-                intent = new Intent(CategoriesActivity.this, ProductsActivity.class);
-                tracker.publish("click:category", "type", "sub", "categoryId", category.getCategoryId());
-              }
-              intent.putExtra(CATEGORY_ID, category.getCategoryId());
-              intent.putExtra(CATEGORY_TITLE, category.getName());
-              startActivity(intent);
+      for (final Category category : categories) {
+        CategoryView categoryView = new CategoryView(CategoriesActivity.this, null);
+        categoryView.setTitleText(category.getName());
+
+        categoryView.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Intent intent;
+            if (category.getChildren() > 0) {
+              intent = new Intent(CategoriesActivity.this, CategoriesActivity.class);
+              tracker.publish("click:category", "type", "main");
+            } else {
+              intent = new Intent(CategoriesActivity.this, ProductsActivity.class);
+              tracker.publish("click:category", "type", "sub", "categoryId", category.getCategoryId());
             }
-          });
-          categorylist.addView(categoryView);
-        }
+            intent.putExtra(CATEGORY_ID, category.getCategoryId());
+            intent.putExtra(CATEGORY_TITLE, category.getName());
+            startActivity(intent);
+          }
+        });
+        categorylist.addView(categoryView);
       }
     }
   }

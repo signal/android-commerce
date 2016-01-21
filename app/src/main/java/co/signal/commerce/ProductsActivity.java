@@ -1,6 +1,5 @@
 package co.signal.commerce;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -8,18 +7,13 @@ import javax.inject.Inject;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import co.signal.commerce.api.ApiManager;
-import co.signal.commerce.model.Category;
 import co.signal.commerce.model.Product;
 import co.signal.commerce.view.ProductListView;
 import co.signal.util.SignalLogger;
@@ -44,14 +38,14 @@ public class ProductsActivity extends BaseActivity {
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-            .setAction("Action", null).show();
-      }
-    });
+//    FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//    fab.setOnClickListener(new View.OnClickListener() {
+//      @Override
+//      public void onClick(View view) {
+//        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//            .setAction("Action", null).show();
+//      }
+//    });
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     RetrieveProductsTask task = new RetrieveProductsTask();
@@ -95,7 +89,7 @@ public class ProductsActivity extends BaseActivity {
       List<Product> result = null;
       try {
         result = apiManager.getProducts(categoryId);
-      } catch (IOException e) {
+      } catch (Exception e) {
         Log.e("commerce", "Retrieve Products Failed", e);
       }
       return result;
@@ -104,14 +98,19 @@ public class ProductsActivity extends BaseActivity {
     @Override
     protected void onPostExecute(List<Product> products) {
       super.onPostExecute(products);
-      if (products != null) {
-        SignalLogger.df("products", "Retrieved %d products from %s", products.size(), categoryId);
-        tracker.publish("load:products",
-            "qty", String.valueOf(products.size()),
-            "categoryId", categoryId);
-
-        drawProducts(products);
+      if (products == null) {
+        Toast.makeText(ProductsActivity.this,
+            "Failed to load product list... please try again.",
+            Toast.LENGTH_LONG)
+            .show();
+        return;
       }
+      SignalLogger.df("products", "Retrieved %d products from %s", products.size(), categoryId);
+      tracker.publish("load:products",
+          "qty", String.valueOf(products.size()),
+          "categoryId", categoryId);
+
+      drawProducts(products);
     }
   }
 }
