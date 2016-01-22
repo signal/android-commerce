@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import com.google.common.collect.ImmutableList;
 
 import co.signal.commerce.module.ApplicationModule;
+import co.signal.commerce.module.EndpointBuilder;
 import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.StandardField;
 import co.signal.serverdirect.api.Tracker;
@@ -39,6 +40,7 @@ import co.signal.serverdirect.api.Tracker;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+
   @Inject
   Tracker tracker;
 
@@ -118,6 +120,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
   public static class GeneralPreferenceFragment extends PreferenceFragment {
     @Inject
     SignalConfig config;
+    @Inject
+    EndpointBuilder endpointBuilder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -127,10 +131,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
       addPreferencesFromResource(R.xml.pref_general);
       setHasOptionsMenu(true);
 
+      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
       attachListenerAndUpdateSummary(findPreference("siteid"), new SummaryUpdateListener() {
         @Override
         public void updateConfig(Preference preference, Object value) {
           // noop for siteid
+        }
+      });
+      attachListenerAndUpdateSummary(findPreference("environment"), new SummaryUpdateListener() {
+        @Override
+        public void updateConfig(Preference preference, Object value) {
+          config.setEndpoint(endpointBuilder.buildFromEnvironment(value.toString()));
+        }
+      });
+      attachListenerAndUpdateSummary(findPreference("protocol"), new SummaryUpdateListener() {
+        @Override
+        public void updateConfig(Preference preference, Object value) {
+          config.setEndpoint(endpointBuilder.buildFromProtocol(value.toString()));
         }
       });
 

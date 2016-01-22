@@ -96,6 +96,18 @@
         <item>20000</item>
     </string-array>
 
+    <string name="pref_title_environment">Environment</string>
+    <string-array name="pref_environment_values">
+        <item>Production</item>
+        <item>Staging</item>
+    </string-array>
+
+    <string name="pref_title_protocol">Protocol</string>
+    <string-array name="pref_protocol_values">
+        <item>HTTP</item>
+        <item>HTTPS</item>
+    </string-array>
+
     <string name="pref_header_logging">Logging</string>
     <string name="pref_title_logging_debug">Debug</string>
     <string name="pref_title_logging_verbose">Verbose</string>

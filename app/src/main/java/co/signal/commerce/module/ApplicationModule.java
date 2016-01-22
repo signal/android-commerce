@@ -49,7 +49,7 @@ public class ApplicationModule {
   // Preference keys
   public static final String PREF_SITE_ID = "siteid";
 
-  // Static URL
+  // Static URLs
   private static final String BOUTIQUE_111_URL = "http://commerce.signal.ninja/api/rest/";
   private static final String RE_THUMB_URL = "http://api.rethumb.com/v1/square/";
 
@@ -89,9 +89,14 @@ public class ApplicationModule {
   }
 
   @Provides @Singleton
-  public SignalConfig provideSignalConfig(@Named("SITE_ID") String siteId) {
+  public EndpointBuilder provideEndpointBuilder() {
+    return new EndpointBuilder(preferences);
+  }
+
+  @Provides @Singleton
+  public SignalConfig provideSignalConfig(@Named("SITE_ID") String siteId, EndpointBuilder endpointBuilder) {
     SignalConfig config = SignalInc.createConfig(appContext)
-        .setEndpoint("https://mobile-stage.signal.ninja/mobile")
+        .setEndpoint(endpointBuilder.build())
         .setMaxQueuedMessages(getPrefInt("msg_max_queued", 100))
         .setMessageExpiration(getPrefLong("msg_expiration", 3600))
         .setMessageRetryCount(getPrefInt("msg_retry_count", 3))
