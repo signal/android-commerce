@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Commerce</string>
+    <string name="app_name">Commerce Demo</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Signal SDK Settings</string>
     <string name="powered_by">Powered by:</string>
@@ -104,23 +104,6 @@
     <string name="pref_title_custom_fields">Custom Fields</string>
 
     <string name="pref_title_standard_fields">Standard Fields</string>
-    <string name="pref_title_sf_app_name">ApplicationName</string>
-    <string name="pref_title_sf_app_ver">ApplicationVersion</string>
-    <string name="pref_title_sf_scr_res">ScreenResolution</string>
-    <string name="pref_title_sf_scr_col">ScreenColor</string>
-    <string name="pref_title_sf_user_language">UserLanguage</string>
-    <string name="pref_title_sf_scr_ori">ScreenOrientation</string>
-    <string name="pref_title_sf_timezone">Timezone</string>
-    <string name="pref_title_sf_os_ver">OsVersion</string>
-    <string name="pref_title_sf_carrier">Carrier</string>
-    <string name="pref_title_sf_dev_info">DeviceInfo</string>
-    <string name="pref_title_sf_act_net">ActiveNetwork</string>
-    <string name="pref_title_sf_dev_type">DeviceIdType</string>
-    <string name="pref_title_sf_dev_id">DeviceId</string>
-    <string name="pref_title_sf_dev_id_md5">DeviceIdMD5</string>
-    <string name="pref_title_sf_dev_id_sha1">DeviceIdSHA1</string>
-    <string name="pref_title_sf_dev_id_sha2">DeviceIdSHA256</string>
-    <string name="pref_title_sf_and_id">AndroidId</string>
 
     <string name="title_activity_categories">boutique 111</string>
     <string name="title_activity_products">Products</string>

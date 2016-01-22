@@ -1,7 +1,5 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
-    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference
         android:defaultValue="@string/pref_default_site_id"
         android:inputType="text"
@@ -11,17 +9,17 @@
         android:singleLine="true"
         android:title="@string/pref_title_site_id"/>
 
-    <SwitchPreference
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="enable_lifecycle"
         android:title="@string/pref_title_lifecycle"/>
 
-    <SwitchPreference
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="enable_background"
         android:title="@string/pref_title_background"/>
 
-    <SwitchPreference
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="enable_wifi"
         android:title="@string/pref_title_wifi_only"/>

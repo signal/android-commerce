@@ -67,8 +67,7 @@ public class ProductsActivity extends BaseActivity {
   private void drawProducts(List<Product> products) {
     for (final Product product : products) {
       ProductListView view = new ProductListView(ProductsActivity.this);
-      view.setTitleText(product.getTitle());
-      view.setThumbnailUrl(product.getThumbnailUrl());
+      view.setProduct(product);
       view.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {

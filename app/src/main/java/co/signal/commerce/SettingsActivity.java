@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -113,10 +114,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         || StandardFieldPreferenceFragment.class.getName().equals(fragmentName);
   }
 
-  /**
-   * This fragment shows general preferences only. It is used when the
-   * activity is showing a two-pane settings UI.
-   */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class GeneralPreferenceFragment extends PreferenceFragment {
     @Inject
@@ -158,10 +155,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
   }
 
-  /**
-   * This fragment shows notification preferences only. It is used when the
-   * activity is showing a two-pane settings UI.
-   */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class LoggingPreferenceFragment extends PreferenceFragment {
     @Inject
@@ -190,10 +183,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
   }
 
-  /**
-   * This fragment shows data and sync preferences only. It is used when the
-   * activity is showing a two-pane settings UI.
-   */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class ControlsPreferenceFragment extends PreferenceFragment {
     @Inject
@@ -252,10 +241,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
   }
 
-  /**
-   * This fragment shows notification preferences only. It is used when the
-   * activity is showing a two-pane settings UI.
-   */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class StandardFieldPreferenceFragment extends PreferenceFragment {
     @Inject
@@ -275,18 +260,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
           List<StandardField> empty = ImmutableList.of();
           SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(preference.getContext());
 
-          Log.d("stdfld", "--- clear ---");
           config.setStandardFields(empty);
           for (StandardField stdFld : StandardField.values()) {
             String key = "pref_" + stdFld.getName();
             if (preference.getKey().equals(key)) {
               // The current checkbox will not be set in prefs yet, so check the new value
               if ((Boolean)newValue) {
-                Log.d("stdfld-c", stdFld.toString());
                 config.addStandardField(stdFld);
               }
             } else if (prefs.getBoolean(key, false)) {
-              Log.d("stdfld-o", stdFld.toString());
               config.addStandardField(stdFld);
             }
           }
@@ -320,6 +302,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             .getString(preference.getKey(), ""));
   }
 
+  /**
+   * A preference value listener that updates the SignalConfig bundle to reflect its new value.
+   */
   private static abstract class SignalConfigUpdateListener implements Preference.OnPreferenceChangeListener {
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
@@ -330,9 +315,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     abstract void updateConfig(Preference preference, Object value);
   }
 
-    /**
+  /**
    * A preference value change listener that updates the preference's summary
-   * to reflect its new value.
+   * to reflect its new value as well as updating the SignalConfig.
    */
   private static abstract class SummaryUpdateListener extends SignalConfigUpdateListener {
 

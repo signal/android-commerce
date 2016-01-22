@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <declare-styleable name="CategoryView">
-        <attr name="CategoryText" format="string" />
-        <attr name="categoryColor" format="string" />
-    </declare-styleable>
-</resources>
