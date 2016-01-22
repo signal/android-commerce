@@ -73,7 +73,7 @@ public class ProductsActivity extends BaseActivity {
         public void onClick(View v) {
           Intent intent = new Intent(ProductsActivity.this, ProductDetailsActivity.class);
           intent.putExtra(PRODUCT_ID, product.getProductId());
-          intent.putExtra(PRODUCT_TITLE, product.getTitle());
+          intent.putExtra(PRODUCT_TITLE, categoryTitle);
           startActivity(intent);
           tracker.publish("click:product", "productId", product.getProductId());
         }

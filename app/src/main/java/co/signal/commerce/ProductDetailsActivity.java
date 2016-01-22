@@ -69,11 +69,12 @@ public class ProductDetailsActivity extends BaseActivity {
 
   private void drawView(Product product) {
     aq = new AQuery(this);
-
     aq.id(R.id.product_image).image(product.getImageUrl(), false, true, 200, 0);
     aq.id(R.id.product_title).text(product.getTitle());
     aq.id(R.id.product_description).text(product.getDescription());
     aq.id(R.id.product_details).text(product.getDetails());
+    aq.id(R.id.product_price).text("$" + product.getFinalPrice()).visible();
+    aq.id(product.isInStock() ? R.id.product_in_stock : R.id.product_out_of_stock).visible();
   }
 
   private void drawImages(List<String> imageUrls) {
@@ -114,7 +115,10 @@ public class ProductDetailsActivity extends BaseActivity {
         tracker.publish("load:productDetails", "productId", productId);
         drawView(product);
       } else {
-        //TODO: toast
+        Toast.makeText(ProductDetailsActivity.this,
+            "Failed to load Product Details... please try again.",
+            Toast.LENGTH_LONG)
+            .show();
       }
     }
   }
@@ -136,16 +140,14 @@ public class ProductDetailsActivity extends BaseActivity {
       super.onPostExecute(imageUrls);
       if (imageUrls == null) {
         Toast.makeText(ProductDetailsActivity.this,
-            "Failed to load Product Details... please try again.",
+            "Failed to load Product images... please try again.",
             Toast.LENGTH_LONG)
             .show();
         return;
       }
 
       SignalLogger.df("product", "Retrieved %d images from %s (%s)", imageUrls.size(), productId, productTitle);
-      tracker.publish("load:productImages",
-          "productId", productId,
-          "qty", String.valueOf(imageUrls.size()));
+      tracker.publish("load:productImages", "productId", productId, "qty", String.valueOf(imageUrls.size()));
       drawImages(imageUrls);
     }
   }
