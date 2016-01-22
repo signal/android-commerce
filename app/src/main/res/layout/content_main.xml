@@ -46,12 +46,12 @@
         android:layout_centerVertical="true"
         android:background="@drawable/button_red"
         android:layout_centerHorizontal="true"/>
-
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="v1.0"
-              android:id="@+id/label_version"
-              android:layout_below="@+id/img_logo"
-              android:layout_alignRight="@+id/img_signal"
-              android:layout_alignEnd="@+id/img_signal"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="v1.0"
+        android:id="@+id/label_version"
+        android:layout_below="@+id/img_logo"
+        android:layout_alignRight="@+id/img_signal"
+        android:layout_alignEnd="@+id/img_signal"/>
 </RelativeLayout>

@@ -11,7 +11,10 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import com.google.common.collect.ImmutableList;
+
 import co.signal.commerce.CategoriesActivity;
+import co.signal.commerce.LoginActivity;
 import co.signal.commerce.MainActivity;
 import co.signal.commerce.ProductDetailsActivity;
 import co.signal.commerce.ProductsActivity;
@@ -33,6 +36,7 @@ import dagger.Provides;
     CategoriesActivity.class,
     ProductsActivity.class,
     ProductDetailsActivity.class,
+    LoginActivity.class,
     SettingsActivity.class,
     SettingsActivity.GeneralPreferenceFragment.class,
     SettingsActivity.ControlsPreferenceFragment.class,
@@ -110,13 +114,23 @@ public class ApplicationModule {
         .setDebug(preferences.getBoolean("debug_enabled", false))
         .setVerbose(preferences.getBoolean("verbose_enabled", false));
 
+    // Don't send lifecycle events until a proper siteId is set, causes issues with the listener
     if (TextUtils.isEmpty(siteId) || "notset".equals(siteId.toLowerCase())) {
       config.setLifecycleEventsEnabled(false);
     }
-    config.setStandardFields(StandardField.Timezone, StandardField.ScreenOrientation,
-                             StandardField.DeviceInfo);
 
-    config.addCustomField("demo", "true"); // just to add something
+    // Set the standard fields
+    ImmutableList.Builder<StandardField> builder = ImmutableList.builder();
+    for (StandardField stdFld : StandardField.values()) {
+      String key = "pref_" + stdFld.getName();
+      if (preferences.getBoolean(key, false)) {
+        builder.add(stdFld);
+      }
+    }
+    config.setStandardFields(builder.build());
+
+    // Add something for a custom field, email will be added after a login
+    config.addCustomField("demo", "true");
     return config;
   }
 
@@ -177,12 +191,12 @@ public class ApplicationModule {
 
     @Override
     public void addStandardFields(StandardField... standardFields) {
-      SignalLogger.df("tracker", "NullTracker - nothing changed");
+      SignalLogger.df("tracker", "NullTracker | stdflds: %s", Arrays.toString(standardFields));
     }
 
     @Override
-    public void addCustomField(String s, String s1) {
-      SignalLogger.df("tracker", "NullTracker - nothing changed");
+    public void addCustomField(String key, String value) {
+      SignalLogger.df("tracker", "NullTracker | custom: %s -> %s", key, value);
     }
   };
 }

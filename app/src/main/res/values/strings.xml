@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Commerce Demo</string>
     <string name="action_settings">Settings</string>
+    <string name="action_login">Login</string>
     <string name="title_activity_settings">Signal SDK Settings</string>
     <string name="powered_by">Powered by:</string>
     <string name="start_shopping">Start Shopping</string>
@@ -119,4 +120,12 @@
 
     <string name="title_activity_categories">boutique 111</string>
     <string name="title_activity_products">Products</string>
+
+    <string name="title_activity_login">Login</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Password</string>
+    <string name="login_remember_me">Remember me</string>
+    <string name="login_button">Login</string>
+    <string name="login_cancel">Cancel</string>
+
 </resources>
