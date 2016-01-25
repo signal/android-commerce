@@ -21,6 +21,7 @@ import co.signal.commerce.ProductsActivity;
 import co.signal.commerce.SettingsActivity;
 import co.signal.commerce.api.CategoryParser;
 import co.signal.commerce.api.ProductImageUrlParser;
+import co.signal.commerce.api.UserManager;
 import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.SignalInc;
 import co.signal.serverdirect.api.StandardField;
@@ -37,6 +38,8 @@ import dagger.Provides;
     ProductsActivity.class,
     ProductDetailsActivity.class,
     LoginActivity.class,
+    UserManager.class,
+    EndpointBuilder.class,
     SettingsActivity.class,
     SettingsActivity.GeneralPreferenceFragment.class,
     SettingsActivity.ControlsPreferenceFragment.class,
@@ -103,25 +106,25 @@ public class ApplicationModule {
   }
 
   @Provides @Singleton
-  public EndpointBuilder provideEndpointBuilder() {
-    return new EndpointBuilder(preferences);
+  public SharedPreferences provideSharedPreferences() {
+    return preferences;
   }
 
   @Provides @Singleton
   public SignalConfig provideSignalConfig(@Named("SITE_ID") String siteId, EndpointBuilder endpointBuilder) {
     SignalConfig config = SignalInc.createConfig(appContext)
         .setEndpoint(endpointBuilder.build())
-        .setMaxQueuedMessages(getPrefInt("msg_max_queued", 100))
-        .setMessageExpiration(getPrefLong("msg_expiration", 3600))
+        .setMaxQueuedMessages(getPrefInt("msg_max_queued", 1000))
+        .setMessageExpiration(getPrefLong("msg_expiration", 86400))
         .setMessageRetryCount(getPrefInt("msg_retry_count", 3))
-        .setDispatchInterval(getPrefLong("dispatch_interval", 20))
-        .setBatteryPercentage(getPrefInt("battery_percentage", 15))
+        .setDispatchInterval(getPrefLong("dispatch_interval", 30))
+        .setBatteryPercentage(getPrefInt("battery_percentage", 20))
         .setSocketConnectTimeout(getPrefLong("socket_connect_to", 10000))
         .setSocketReadTimeout(getPrefLong("socket_read_to", 5000))
         .setPublishInBackground(preferences.getBoolean("enable_background", false))
         .setNetworkWifiOnly(preferences.getBoolean("enable_wifi", false))
         .setLifecycleEventsEnabled(preferences.getBoolean("enable_lifecycle", true))
-        .setDebug(preferences.getBoolean("debug_enabled", false))
+        .setDebug(preferences.getBoolean("debug_enabled", true))
         .setVerbose(preferences.getBoolean("verbose_enabled", false));
 
     // Don't send lifecycle events until a proper siteId is set, causes issues with the listener

@@ -1,5 +1,8 @@
 package co.signal.commerce.module;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import android.content.SharedPreferences;
 
 import static co.signal.commerce.module.ApplicationModule.ENV_PROD;
@@ -7,15 +10,13 @@ import static co.signal.commerce.module.ApplicationModule.ENV_PROD;
 /**
  * Constructs the Signal mobile endpoint from preference values
  */
+@Singleton
 public class EndpointBuilder {
   public static final String PROD_URL = "s.thebrighttag.com/mobile";
   public static final String STAGE_URL = "mobile-stage.signal.ninja/mobile";
 
-  private SharedPreferences preferences;
-
-  public EndpointBuilder(SharedPreferences preferences) {
-    this.preferences = preferences;
-  }
+  @Inject
+  SharedPreferences preferences;
 
   public String build() {
     return getProtocol() + "://" + getUrl();

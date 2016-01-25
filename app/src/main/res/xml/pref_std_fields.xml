@@ -2,15 +2,15 @@
 
     <CheckBoxPreference
         android:key="pref_ApplicationName"
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:title="ApplicationName"/>
     <CheckBoxPreference
         android:key="pref_ApplicationVersion"
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:title="ApplicationVersion"/>
     <CheckBoxPreference
         android:key="pref_OsVersion"
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:title="OsVersion"/>
     <CheckBoxPreference
         android:key="pref_ActiveNetwork"
@@ -22,7 +22,7 @@
         android:title="Carrier"/>
     <CheckBoxPreference
         android:key="pref_DeviceInfo"
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:title="DeviceInfo"/>
     <CheckBoxPreference
         android:key="pref_ScreenColor"

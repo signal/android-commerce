@@ -8,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.androidquery.AQuery;
+
+import co.signal.commerce.api.UserManager;
 import co.signal.serverdirect.api.Tracker;
 
 /**
@@ -16,6 +19,8 @@ import co.signal.serverdirect.api.Tracker;
 public class BaseActivity extends AppCompatActivity {
   @Inject
   Tracker tracker;
+  @Inject
+  UserManager userManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +33,25 @@ public class BaseActivity extends AppCompatActivity {
     super.onPostResume();
     String name = this.getClass().getSimpleName();
     tracker.publish("view:" + name);
+
+    // The menu might have changed due to login
+    if (userManager.wasLoginViewed()) {
+      invalidateOptionsMenu();
+    }
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.menu_main, menu);
+
+    if (userManager.isLoggedIn()) {
+      menu.findItem(R.id.action_login).setVisible(false);
+    } else {
+      menu.findItem(R.id.action_logout).setVisible(false);
+    }
     return true;
   }
-
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
@@ -49,6 +64,12 @@ public class BaseActivity extends AppCompatActivity {
     } else if (id == R.id.action_login) {
       startActivity(new Intent(this, LoginActivity.class));
       tracker.publish("click:menu_login");
+      return true;
+    } else if (id == R.id.action_logout) {
+      tracker.publish("click:menu_logout");
+      // Call publish above before UserManager call so logout has the hashed email
+      userManager.userLogout();
+      invalidateOptionsMenu();
       return true;
     } else if (id == android.R.id.home) {
       onBackPressed();

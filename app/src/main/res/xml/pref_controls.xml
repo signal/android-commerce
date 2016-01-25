@@ -28,7 +28,7 @@
         android:title="@string/pref_title_msg_retry_count"/>
 
     <ListPreference
-        android:defaultValue="10"
+        android:defaultValue="20"
         android:entries="@array/pref_battery_values"
         android:entryValues="@array/pref_battery_values"
         android:key="battery_percentage"

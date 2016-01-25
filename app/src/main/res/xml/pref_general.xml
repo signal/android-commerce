@@ -33,12 +33,12 @@
         android:title="@string/pref_title_lifecycle"/>
 
     <CheckBoxPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="enable_background"
         android:title="@string/pref_title_background"/>
 
     <CheckBoxPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="enable_wifi"
         android:title="@string/pref_title_wifi_only"/>
 
