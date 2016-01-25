@@ -1,7 +1,5 @@
 package co.signal.commerce;
 
-import javax.inject.Inject;
-
 import android.app.Application;
 
 import co.signal.commerce.module.ApplicationModule;

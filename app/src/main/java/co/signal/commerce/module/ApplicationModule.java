@@ -47,11 +47,16 @@ import dagger.Provides;
 public class ApplicationModule {
   // Named strings for injection
   public static final String NAME_SITE_ID = "SITE_ID";
+  public static final String NAME_ENVIRONMENT = "ENV";
   public static final String NAME_API_URL = "API_URL";
   public static final String NAME_THUMB_URL = "THUMB_URL";
 
   // Preference keys
   public static final String PREF_SITE_ID = "siteid";
+  public static final String PREF_ENVIRONMENT = "environment";
+  // Preference Values
+  public static final String ENV_PROD = "Production";
+  public static final String ENV_STAGE = "Staging";
 
   // Static URLs
   private static final String BOUTIQUE_111_URL = "http://commerce.signal.ninja/api/rest/";
@@ -90,6 +95,11 @@ public class ApplicationModule {
   @Provides @Named(NAME_SITE_ID)
   public String provideSiteId() {
     return preferences.getString(PREF_SITE_ID, "NotSet"); // Set in SettingsActivity
+  }
+
+  @Provides @Named(NAME_ENVIRONMENT)
+  public String provideEnvironment() {
+    return preferences.getString(PREF_ENVIRONMENT, ENV_PROD); // Set in SettingsActivity
   }
 
   @Provides @Singleton

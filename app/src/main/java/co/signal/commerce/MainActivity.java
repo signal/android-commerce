@@ -1,18 +1,25 @@
 package co.signal.commerce;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import co.signal.commerce.module.ApplicationModule;
+import static co.signal.commerce.module.ApplicationModule.ENV_STAGE;
+
 public class MainActivity extends BaseActivity {
+
+  @Inject @Named(ApplicationModule.NAME_ENVIRONMENT)
+  String environment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +41,7 @@ public class MainActivity extends BaseActivity {
     });
 
     ImageView img = (ImageView)findViewById(R.id.img_logo);
-    img.setOnClickListener(new WebViewOnClickListener("http://commerce.signal.ninja"));
+    img.setOnClickListener(new WebViewOnClickListener(augmentUrl("http://commerce.signal.ninja")));
 
     img = (ImageView)findViewById(R.id.img_signal);
     img.setOnClickListener(new WebViewOnClickListener("http://www.signal.co"));
@@ -52,6 +59,7 @@ public class MainActivity extends BaseActivity {
       try {
         Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(myIntent);
+        tracker.publish("event:web", "url", url);
       } catch (ActivityNotFoundException e) {
         Toast.makeText(MainActivity.this,
             "No application can handle this request. Please install a web browser",
@@ -59,5 +67,13 @@ public class MainActivity extends BaseActivity {
             .show();
       }
     }
+  }
+
+  private String augmentUrl(String url) {
+    String newUrl = url + "?siteid=" + tracker.getSiteId();
+    if (ENV_STAGE.equals(environment)) {
+      newUrl = newUrl + "&staging=true";
+    }
+    return newUrl;
   }
 }

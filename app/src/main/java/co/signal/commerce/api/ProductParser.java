@@ -15,30 +15,6 @@ import co.signal.commerce.module.ApplicationModule;
 
 /**
  * Parses the json for a Product object
- *
- * "428": {
- *   "entity_id": "428",
- *   "type_id": "configurable",
- *   "sku": "wpd010c",
- *   "occasion": null,
- *   "apparel_type": "37",
- *   "gender": "94",
- *   "color": null,
- *   "size": null,
- *   "description": "Wide leg pant, front pleat detail. Sits on natural waist. Wool, unlined. Dry clean.",
- *   "meta_keyword": null,
- *   "short_description": "Break away from the trend with these elegant pleat front pants. The high waistline and wide leg creates a feminine sihouette that's flattering on any figure. Pair with d'Orsay pumps and a waist belt.",
- *   "name": "Park Avenue Pleat Front Trousers",
- *   "meta_title": null,
- *   "meta_description": null,
- *   "regular_price_with_tax": 265.21,
- *   "regular_price_without_tax": 245,
- *   "final_price_with_tax": 265.21,
- *   "final_price_without_tax": 245,
- *   "is_saleable": false,
- *   "is_in_stock": false,
- *   "image_url": "http://commerce.signal.ninja/media/catalog/product/cache/0/image/9df78eab33525d08d6e5fb8d27136e95/w/p/wpd010t.jpg"
- * }
  */
 @Singleton
 public class ProductParser implements BaseParser<Product> {
@@ -101,3 +77,30 @@ public class ProductParser implements BaseParser<Product> {
     return thumbnailRootUrl + size + "/" + imageUrl;
   }
 }
+/**
+ * Parses the json for a Product object
+ *
+ * "428": {
+ *   "entity_id": "428",
+ *   "type_id": "configurable",
+ *   "sku": "wpd010c",
+ *   "occasion": null,
+ *   "apparel_type": "37",
+ *   "gender": "94",
+ *   "color": null,
+ *   "size": null,
+ *   "description": "Wide leg pant, front pleat detail. Sits on natural waist. Wool, unlined. Dry clean.",
+ *   "meta_keyword": null,
+ *   "short_description": "Break away from the trend with these elegant pleat front pants. The high waistline and wide leg creates a feminine sihouette that's flattering on any figure. Pair with d'Orsay pumps and a waist belt.",
+ *   "name": "Park Avenue Pleat Front Trousers",
+ *   "meta_title": null,
+ *   "meta_description": null,
+ *   "regular_price_with_tax": 265.21,
+ *   "regular_price_without_tax": 245,
+ *   "final_price_with_tax": 265.21,
+ *   "final_price_without_tax": 245,
+ *   "is_saleable": false,
+ *   "is_in_stock": false,
+ *   "image_url": "http://commerce.signal.ninja/media/catalog/product/cache/0/image/9df78eab33525d08d6e5fb8d27136e95/w/p/wpd010t.jpg"
+ * }
+ */

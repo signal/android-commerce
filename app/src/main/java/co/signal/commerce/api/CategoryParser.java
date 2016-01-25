@@ -8,13 +8,6 @@ import co.signal.commerce.model.Category;
 
 /**
  * Parses the json for a Category object
- *
- *  "26": {
- *    "entity_id": "26",
- *    "parent_id": "8",
- *    "name": "Woman",
- *    "children_count": "0"
- *  }
  */
 public class CategoryParser implements BaseParser<Category> {
 
@@ -39,3 +32,12 @@ public class CategoryParser implements BaseParser<Category> {
     return builder.build();
   }
 }
+
+/**
+ *  "26": {
+ *    "entity_id": "26",
+ *    "parent_id": "8",
+ *    "name": "Woman",
+ *    "children_count": "0"
+ *  }
+ */
