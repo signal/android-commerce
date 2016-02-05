@@ -23,7 +23,7 @@ public class ProductListView extends LinearLayout {
   public void setProduct(Product product) {
     AQuery aq = new AQuery(this);
     aq.id(R.id.product_text).text(product.getTitle());
-    aq.id(R.id.product_price).text("$" + product.getFinalPrice());
+    aq.id(R.id.product_price).text("$" + product.getFinalPrice().toPlainString());
     aq.id(R.id.product_thumbnail).image(product.getThumbnailUrl(), true, true);
   }
 }

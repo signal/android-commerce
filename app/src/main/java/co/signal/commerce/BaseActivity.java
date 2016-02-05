@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 
 import co.signal.commerce.api.UserManager;
+import co.signal.commerce.model.Cart;
 import co.signal.serverdirect.api.Tracker;
 
 /**
@@ -21,6 +23,8 @@ public class BaseActivity extends AppCompatActivity {
   Tracker tracker;
   @Inject
   UserManager userManager;
+  @Inject
+  Cart cart;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +38,8 @@ public class BaseActivity extends AppCompatActivity {
     String name = this.getClass().getSimpleName();
     tracker.publish("view:" + name);
 
-    // The menu might have changed due to login
-    if (userManager.wasLoginViewed()) {
-      invalidateOptionsMenu();
-    }
+    // The menu might have changed due to login or cart changes
+    invalidateOptionsMenu();
   }
 
   @Override
@@ -50,6 +52,10 @@ public class BaseActivity extends AppCompatActivity {
     } else {
       menu.findItem(R.id.action_logout).setVisible(false);
     }
+    menu.findItem(R.id.action_cart).setIcon(
+        cart.isEmpty()
+            ? R.drawable.ic_shopping_cart_black_24dp
+            : R.drawable.ic_shopping_cart_white_24dp);
     return true;
   }
 
@@ -57,7 +63,16 @@ public class BaseActivity extends AppCompatActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
 
-    if (id == R.id.action_settings) {
+    if (id == R.id.action_cart) {
+      Toast.makeText(this,
+          "Cart Total: $" + cart.getCost().toPlainString(),
+          Toast.LENGTH_LONG)
+          .show();
+
+//      startActivity(new Intent(this, SettingsActivity.class));
+//      tracker.publish("click:menu_settings");
+      return true;
+    } else if (id == R.id.action_settings) {
       startActivity(new Intent(this, SettingsActivity.class));
       tracker.publish("click:menu_settings");
       return true;

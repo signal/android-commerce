@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableList;
 import co.signal.commerce.model.Category;
 
 @Singleton
-public class CategoryListParser implements BaseParser<List<Category>> {
+public class CategoryListParser extends BaseParser<List<Category>> {
   @Inject
   CategoryParser categoryParser;
 

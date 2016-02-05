@@ -17,14 +17,13 @@ import co.signal.commerce.module.ApplicationModule;
  * Parses the json for a Product object
  */
 @Singleton
-public class ProductParser implements BaseParser<Product> {
+public class ProductParser extends BaseParser<Product> {
 
   @Inject @Named(ApplicationModule.NAME_THUMB_URL)
   String thumbnailRootUrl;
 
   @Override
   public Product parse(JsonReader reader) throws IOException {
-    DecimalFormat formatter = new DecimalFormat("0.00");
     Product.Builder builder = new Product.Builder();
 
     reader.beginObject();
@@ -41,13 +40,13 @@ public class ProductParser implements BaseParser<Product> {
       } else if ("short_description".equals(key)) {
         builder.details(reader.nextString());
       } else if ("regular_price_without_tax".equals(key)) {
-        builder.regularPrice(reader.nextString());
+        builder.regularPrice(parseMoney(reader.nextDouble()));
       } else if ("regular_price_with_tax".equals(key)) {
-        builder.regularPriceWithTax(formatter.format(reader.nextDouble()));
+        builder.regularPriceWithTax(parseMoney(reader.nextDouble()));
       } else if ("final_price_without_tax".equals(key)) {
-        builder.finalPrice(formatter.format(reader.nextDouble()));
+        builder.finalPrice(parseMoney(reader.nextDouble()));
       } else if ("final_price_with_tax".equals(key)) {
-        builder.finalPriceWithTax(formatter.format(reader.nextDouble()));
+        builder.finalPriceWithTax(parseMoney(reader.nextDouble()));
       } else if ("is_saleable".equals(key)) {
         // Magento sends boolean for False, and a "1" string for True
         if (reader.peek() == JsonToken.BOOLEAN) {

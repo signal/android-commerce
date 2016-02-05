@@ -24,6 +24,7 @@ import co.signal.util.SignalLogger;
 
 public class ProductDetailsActivity extends BaseActivity {
   private AQuery aq;
+  private Product product;
   private String productId;
   private String productTitle;
   private LinearLayout productImages;
@@ -35,6 +36,7 @@ public class ProductDetailsActivity extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_product_details);
+    aq = new AQuery(this);
     productImages = (LinearLayout)findViewById(R.id.product_images);
 
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -67,14 +69,14 @@ public class ProductDetailsActivity extends BaseActivity {
     }
   }
 
-  private void drawView(Product product) {
-    aq = new AQuery(this);
+  private void drawView() {
     aq.id(R.id.product_image).image(product.getImageUrl(), false, true, 200, 0);
     aq.id(R.id.product_title).text(product.getTitle());
     aq.id(R.id.product_description).text(product.getDescription());
     aq.id(R.id.product_details).text(product.getDetails());
-    aq.id(R.id.product_price).text("$" + product.getFinalPrice()).visible();
-    aq.id(product.isInStock() ? R.id.product_in_stock : R.id.product_out_of_stock).visible();
+    aq.id(R.id.product_price).text("$" + product.getFinalPrice().toPlainString()).visible();
+    aq.id(product.isInStock() ? R.id.btn_add_to_cart : R.id.product_out_of_stock).visible();
+    aq.id(R.id.btn_add_to_cart).clicked(new AddToCartClickListener());
   }
 
   private void drawImages(List<String> imageUrls) {
@@ -108,12 +110,13 @@ public class ProductDetailsActivity extends BaseActivity {
     }
 
     @Override
-    protected void onPostExecute(Product product) {
-      super.onPostExecute(product);
-      if (product != null) {
+    protected void onPostExecute(Product productDetails) {
+      super.onPostExecute(productDetails);
+      if (productDetails != null) {
+        product = productDetails;
         SignalLogger.df("product", "Retrieved product from %s (%s)", productId, productTitle);
         tracker.publish("load:productDetails", "productId", productId);
-        drawView(product);
+        drawView();
       } else {
         Toast.makeText(ProductDetailsActivity.this,
             "Failed to load Product Details... please try again.",
@@ -149,6 +152,19 @@ public class ProductDetailsActivity extends BaseActivity {
       SignalLogger.df("product", "Retrieved %d images from %s (%s)", imageUrls.size(), productId, productTitle);
       tracker.publish("load:productImages", "productId", productId, "qty", String.valueOf(imageUrls.size()));
       drawImages(imageUrls);
+    }
+  }
+
+  private class AddToCartClickListener implements View.OnClickListener {
+    @Override
+    public void onClick(View v) {
+      cart.addProduct(product);
+      tracker.publish("cart:add",
+          "productId", product.getProductId(),
+          "sku", product.getSku(),
+          "price", product.getFinalPrice().toPlainString()
+      );
+      invalidateOptionsMenu();
     }
   }
 }

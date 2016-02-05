@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableList;
 import co.signal.commerce.model.Product;
 
 @Singleton
-public class ProductImageUrlParser implements BaseParser<List<String>> {
+public class ProductImageUrlParser extends BaseParser<List<String>> {
 
   @Override
   public List<String> parse(JsonReader reader) throws IOException {

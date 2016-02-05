@@ -1,5 +1,7 @@
 package co.signal.commerce.model;
 
+import java.math.BigDecimal;
+
 /**
  * Product Details
  */
@@ -11,10 +13,10 @@ public class Product {
   private final String details;
   private final String imageUrl;
   private final String thumbnailUrl;
-  private final String regularPrice;
-  private final String regularPriceWithTax;
-  private final String finalPrice;
-  private final String finalPriceWithTax;
+  private final BigDecimal regularPrice;
+  private final BigDecimal regularPriceWithTax;
+  private final BigDecimal finalPrice;
+  private final BigDecimal finalPriceWithTax;
   private final boolean onSale;
   private final boolean inStock;
 
@@ -62,19 +64,19 @@ public class Product {
     return thumbnailUrl;
   }
 
-  public String getRegularPrice() {
+  public BigDecimal getRegularPrice() {
     return regularPrice;
   }
 
-  public String getRegularPriceWithTax() {
+  public BigDecimal getRegularPriceWithTax() {
     return regularPriceWithTax;
   }
 
-  public String getFinalPrice() {
+  public BigDecimal getFinalPrice() {
     return finalPrice;
   }
 
-  public String getFinalPriceWithTax() {
+  public BigDecimal getFinalPriceWithTax() {
     return finalPriceWithTax;
   }
 
@@ -94,10 +96,10 @@ public class Product {
     private String details;
     private String imageUrl;
     private String thumbnailUrl;
-    private String regularPrice;
-    private String regularPriceWithTax;
-    private String finalPrice;
-    private String finalPriceWithTax;
+    private BigDecimal regularPrice;
+    private BigDecimal regularPriceWithTax;
+    private BigDecimal finalPrice;
+    private BigDecimal finalPriceWithTax;
     private boolean onSale = false;
     private boolean inStock = false;
 
@@ -136,22 +138,22 @@ public class Product {
       return this;
     }
 
-    public Builder regularPrice(String regularPrice) {
+    public Builder regularPrice(BigDecimal regularPrice) {
       this.regularPrice = regularPrice;
       return this;
     }
 
-    public Builder regularPriceWithTax(String regularPriceWithTax) {
+    public Builder regularPriceWithTax(BigDecimal regularPriceWithTax) {
       this.regularPriceWithTax = regularPriceWithTax;
       return this;
     }
 
-    public Builder finalPriceWithTax(String finalPriceWithTax) {
+    public Builder finalPriceWithTax(BigDecimal finalPriceWithTax) {
       this.finalPriceWithTax = finalPriceWithTax;
       return this;
     }
 
-    public Builder finalPrice(String finalPrice) {
+    public Builder finalPrice(BigDecimal finalPrice) {
       this.finalPrice = finalPrice;
       return this;
     }

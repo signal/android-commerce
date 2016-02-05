@@ -22,6 +22,7 @@ import co.signal.commerce.SettingsActivity;
 import co.signal.commerce.api.CategoryParser;
 import co.signal.commerce.api.ProductImageUrlParser;
 import co.signal.commerce.api.UserManager;
+import co.signal.commerce.model.Cart;
 import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.SignalInc;
 import co.signal.serverdirect.api.StandardField;
@@ -81,18 +82,6 @@ public class ApplicationModule {
   @Provides @Singleton @Named(NAME_THUMB_URL)
   public String provideThumbnailUrl() {
     return RE_THUMB_URL;
-  }
-
-  @Provides @Singleton
-  public CategoryParser provideCategoryParser() {
-    // Need to create manually since there is nothing injected in this class
-    return new CategoryParser();
-  }
-
-  @Provides @Singleton
-  public ProductImageUrlParser provideImageUrlParser() {
-    // Need to create manually since there is nothing injected in this class
-    return new ProductImageUrlParser();
   }
 
   @Provides @Named(NAME_SITE_ID)
@@ -177,6 +166,23 @@ public class ApplicationModule {
   private int getPrefInt(String key, int defaultValue) {
     // Stored as a string via the settings pages, so need to convert back and forth
     return Integer.parseInt(preferences.getString(key, String.valueOf(defaultValue)));
+  }
+
+  @Provides @Singleton
+  public CategoryParser provideCategoryParser() {
+    // Need to create manually since there is nothing injected in this class
+    return new CategoryParser();
+  }
+
+  @Provides @Singleton
+  public ProductImageUrlParser provideImageUrlParser() {
+    // Need to create manually since there is nothing injected in this class
+    return new ProductImageUrlParser();
+  }
+
+  @Provides @Singleton
+  public Cart provideShoppingCart() {
+    return new Cart();
   }
 
   /**
