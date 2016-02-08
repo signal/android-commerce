@@ -157,13 +157,17 @@ public class ProductDetailsActivity extends BaseActivity {
 
   private class AddToCartClickListener implements View.OnClickListener {
     @Override
-    public void onClick(View v) {
+    public void onClick(View view) {
       cart.addProduct(product);
       tracker.publish("cart:add",
           "productId", product.getProductId(),
           "sku", product.getSku(),
           "price", product.getFinalPrice().toPlainString()
       );
+      Snackbar.make(view, product.getTitle() + " added to cart.", Snackbar.LENGTH_LONG)
+          .setAction("Action", null)
+          .show();
+
       invalidateOptionsMenu();
     }
   }

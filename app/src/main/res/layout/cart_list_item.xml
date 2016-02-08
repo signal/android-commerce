@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:visibility="visible"
+              android:background="@drawable/list_background"
+              android:layout_marginTop="1dp"
+              android:layout_marginLeft="1dp"
+              android:layout_marginRight="1dp"
+              android:padding="1dp">
+    <ImageView
+        android:id="@+id/product_thumbnail"
+        android:layout_height="match_parent"
+        android:layout_width="45dp"
+        android:layout_marginLeft="2dp"/>
+
+    <TextView
+        android:id="@+id/product_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:textSize="18sp"
+        android:textColor="@color/colorBlack"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:layout_alignTop="@+id/product_thumbnail"
+        android:layout_toRightOf="@+id/product_thumbnail"
+        android:layout_toEndOf="@+id/product_thumbnail"/>
+
+    <TextView
+        android:id="@+id/product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:textSize="12sp"
+        android:textColor="@color/colorPrimary"
+        android:layout_below="@+id/product_text"
+        android:layout_toRightOf="@+id/product_thumbnail"
+        android:layout_toEndOf="@+id/product_thumbnail"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:background="@color/colorLightGray"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+        <ImageView
+            android:id="@+id/cart_remove"
+            android:layout_height="match_parent"
+            android:layout_width="24dp"
+            android:src="@drawable/ic_remove_black_24dp"/>
+        <TextView
+            android:id="@+id/cart_qty"
+            android:layout_height="match_parent"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:layout_width="30dp"
+            android:textSize="24sp"
+            android:gravity="center_vertical|center_horizontal"
+            android:textColor="@color/colorBlack"/>
+        <ImageView
+            android:id="@+id/cart_add"
+            android:layout_height="match_parent"
+            android:layout_width="24dp"
+            android:src="@drawable/ic_add_black_24dp"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

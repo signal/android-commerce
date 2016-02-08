@@ -18,6 +18,7 @@ import co.signal.commerce.LoginActivity;
 import co.signal.commerce.MainActivity;
 import co.signal.commerce.ProductDetailsActivity;
 import co.signal.commerce.ProductsActivity;
+import co.signal.commerce.PurchaseActivity;
 import co.signal.commerce.SettingsActivity;
 import co.signal.commerce.api.CategoryParser;
 import co.signal.commerce.api.ProductImageUrlParser;
@@ -39,6 +40,7 @@ import dagger.Provides;
     ProductsActivity.class,
     ProductDetailsActivity.class,
     LoginActivity.class,
+    PurchaseActivity.class,
     UserManager.class,
     EndpointBuilder.class,
     SettingsActivity.class,

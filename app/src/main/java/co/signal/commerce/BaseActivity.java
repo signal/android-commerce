@@ -64,13 +64,8 @@ public class BaseActivity extends AppCompatActivity {
     int id = item.getItemId();
 
     if (id == R.id.action_cart) {
-      Toast.makeText(this,
-          "Cart Total: $" + cart.getCost().toPlainString(),
-          Toast.LENGTH_LONG)
-          .show();
-
-//      startActivity(new Intent(this, SettingsActivity.class));
-//      tracker.publish("click:menu_settings");
+      startActivity(new Intent(this, PurchaseActivity.class));
+      tracker.publish("click:menu_purchase");
       return true;
     } else if (id == R.id.action_settings) {
       startActivity(new Intent(this, SettingsActivity.class));

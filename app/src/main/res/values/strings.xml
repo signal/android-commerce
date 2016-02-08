@@ -134,5 +134,6 @@
 
     <string name="out_of_stock">Out of Stock</string>
     <string name="add_to_cart">Add to Cart</string>
+    <string name="title_activity_purchase">Purchase</string>
 
 </resources>

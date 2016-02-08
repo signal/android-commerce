@@ -38,7 +38,7 @@ public class Cart {
       }
     }
     if (!found) {
-      items.add(new CartItem(product));
+      items.add(new CartItem(this, product));
     }
     calculate();
   }

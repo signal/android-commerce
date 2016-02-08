@@ -4,17 +4,18 @@ package co.signal.commerce.model;
  * Shopping Cart Item
  */
 public class CartItem {
+  private final Cart cart;
   private final Product product;
   private int quantity;
 
-  public CartItem(Product product) {
+  public CartItem(Cart cart, Product product) {
+    this.cart = cart;
     this.product = product;
     this.quantity = 1;
   }
 
-  public CartItem(Product product, int quantity) {
-    this.product = product;
-    this.quantity = quantity;
+  public Cart getCart() {
+    return cart;
   }
 
   public Product getProduct() {
