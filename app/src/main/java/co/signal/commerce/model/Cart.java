@@ -1,6 +1,7 @@
 package co.signal.commerce.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  * Shopping cart
  */
 public class Cart {
-  public static final BigDecimal ZERO = BigDecimal.ZERO.setScale(2);
+  public static final BigDecimal ZERO = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
   private List<CartItem> items = new LinkedList<>();
   private BigDecimal cost = ZERO;
@@ -74,6 +75,14 @@ public class Cart {
 
   public BigDecimal getTotal() {
     return total;
+  }
+
+  public int getItemCount() {
+    int count = 0;
+    for (CartItem item : items) {
+      count += item.getQuantity();
+    }
+    return count;
   }
 
   public boolean isEmpty() {

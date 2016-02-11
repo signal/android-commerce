@@ -42,7 +42,7 @@ public class LoginActivity extends Activity {
 
       @Override
       public void afterTextChanged(Editable s) {
-        boolean valid = isValidEmail(s.toString()) &&
+        boolean valid = UserManager.isValidEmail(s.toString()) &&
             !TextUtils.isEmpty(aq.id(R.id.login_password).getText().toString());
         aq.id(R.id.btn_login).enabled(valid);
       }
@@ -59,7 +59,7 @@ public class LoginActivity extends Activity {
 
       @Override
       public void afterTextChanged(Editable s) {
-        boolean valid = isValidEmail(aq.id(R.id.login_email).getText().toString()) &&
+        boolean valid = UserManager.isValidEmail(aq.id(R.id.login_email).getText().toString()) &&
             !TextUtils.isEmpty(s.toString());
         aq.id(R.id.btn_login).enabled(valid);
       }
@@ -83,13 +83,5 @@ public class LoginActivity extends Activity {
         finish();
       }
     });
-  }
-
-  private static boolean isValidEmail(String target) {
-    if (TextUtils.isEmpty(target)) {
-      return false;
-    }
-    //android Regex to check the email address Validation
-    return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
   }
 }

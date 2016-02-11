@@ -52,10 +52,12 @@ public class BaseActivity extends AppCompatActivity {
     } else {
       menu.findItem(R.id.action_logout).setVisible(false);
     }
-    menu.findItem(R.id.action_cart).setIcon(
-        cart.isEmpty()
-            ? R.drawable.ic_shopping_cart_black_24dp
-            : R.drawable.ic_shopping_cart_white_24dp);
+
+    menu.findItem(R.id.action_cart)
+        .setIcon(cart.isEmpty() ? R.drawable.ic_shopping_cart_black_24dp
+                                : R.drawable.ic_shopping_cart_white_24dp)
+        .setVisible(this.getClass() != CheckoutActivity.class);
+
     return true;
   }
 
@@ -64,8 +66,13 @@ public class BaseActivity extends AppCompatActivity {
     int id = item.getItemId();
 
     if (id == R.id.action_cart) {
-      startActivity(new Intent(this, PurchaseActivity.class));
-      tracker.publish("click:menu_purchase");
+      if (cart.isEmpty()) {
+        Toast.makeText(this, "Your shopping cart is empty... go buy something!", Toast.LENGTH_LONG)
+            .show();
+      } else {
+        startActivity(new Intent(this, CheckoutActivity.class));
+        tracker.publish("click:menu_checkout");
+      }
       return true;
     } else if (id == R.id.action_settings) {
       startActivity(new Intent(this, SettingsActivity.class));
@@ -86,5 +93,17 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  public Tracker getTracker() {
+    return tracker;
+  }
+
+  public UserManager getUserManager() {
+    return userManager;
+  }
+
+  public Cart getCart() {
+    return cart;
   }
 }

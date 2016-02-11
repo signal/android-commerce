@@ -134,6 +134,11 @@
 
     <string name="out_of_stock">Out of Stock</string>
     <string name="add_to_cart">Add to Cart</string>
-    <string name="title_activity_purchase">Purchase</string>
+
+    <string name="title_activity_checkout">Checkout</string>
+    <string name="totals_items">Items (%s):</string>
+    <string name="totals_tax">Tax:</string>
+    <string name="totals_shipping">Shipping:</string>
+    <string name="totals_total">Order Total:</string>
 
 </resources>

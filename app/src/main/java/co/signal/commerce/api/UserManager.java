@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import co.signal.serverdirect.api.Hashes;
 import co.signal.serverdirect.api.SignalConfig;
@@ -59,6 +60,15 @@ public class UserManager {
     boolean result = loginPageViewed;
     loginPageViewed = false;
     return result;
+  }
+
+
+  public static boolean isValidEmail(String target) {
+    if (TextUtils.isEmpty(target)) {
+      return false;
+    }
+    //android Regex to check the email address Validation
+    return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
   }
 }
 
