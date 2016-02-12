@@ -141,4 +141,7 @@
     <string name="totals_shipping">Shipping:</string>
     <string name="totals_total">Order Total:</string>
 
+    <string name="confirm_title">Thank you for your order:</string>
+    <string name="confirm_number">Order Number:</string>
+
 </resources>

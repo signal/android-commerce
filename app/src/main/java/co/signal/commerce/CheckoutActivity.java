@@ -1,12 +1,10 @@
 package co.signal.commerce;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -15,9 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
@@ -28,6 +24,8 @@ import co.signal.commerce.model.CartItem;
 import co.signal.commerce.view.CartItemView;
 
 public class CheckoutActivity extends BaseActivity {
+
+  private String orderNum = null;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +64,16 @@ public class CheckoutActivity extends BaseActivity {
       aq = new AQuery(view);
     }
 
+    /**
+     * Convenience for all the fragment to get activity objects
+     * @return The current activity cast to BaseActivity
+     */
+    CheckoutActivity activity() {
+      return (CheckoutActivity)getActivity();
+    }
+
     public void updateTotals() {
-      final Cart cart = ((CheckoutActivity)getActivity()).getCart();
+      final Cart cart = activity().getCart();
 
       aq.id(R.id.label_items).text("Items (" + cart.getItemCount() + "):");
       aq.id(R.id.cart_subtotal).text("$" + cart.getCost().toPlainString());
@@ -94,14 +100,14 @@ public class CheckoutActivity extends BaseActivity {
       aq.id(R.id.btn_next).clicked(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          BaseActivity activity = (BaseActivity)getActivity();
-          Fragment nextFragment = activity.userManager.isLoggedIn()
+          Fragment nextFragment = activity().userManager.isLoggedIn()
               ? new PlaceOrderFragment()
               : new LoginFragment();
-          activity.getSupportFragmentManager()
+          activity().getSupportFragmentManager()
               .beginTransaction()
               .replace(R.id.fragment_container, nextFragment)
               .commit();
+          activity().tracker.publish("click:next", "fragment", nextFragment.getClass().getSimpleName());
         }
       });
 
@@ -111,24 +117,24 @@ public class CheckoutActivity extends BaseActivity {
     }
 
     private void drawCart() {
-      final Cart cart = ((CheckoutActivity)getActivity()).getCart();
+      final Cart cart = activity().getCart();
       for (final CartItem cartItem : cart.getItems()) {
         final CartItemView cartItemView = new CartItemView(getContext(), null);
         cartItemView.setCartItem(cartItem);
         cartList.addView(cartItemView);
-
-        aq.id(R.id.cart_add).clicked(new View.OnClickListener() {
+        cartItemView.findViewById(R.id.cart_add).setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {
             if (cartItem.getQuantity() < 9) {
               cart.addProduct(cartItem.getProduct());
               updateQty(cartItemView, cartItem);
               updateTotals();
+              activity().tracker.publish("click:cart_add", "productId", cartItem.getProduct().getProductId());
             }
           }
         });
 
-        aq.id(R.id.cart_remove).clicked(new View.OnClickListener() {
+        cartItemView.findViewById(R.id.cart_remove).setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(final View view) {
             int qty = cartItem.getQuantity();
@@ -143,6 +149,7 @@ public class CheckoutActivity extends BaseActivity {
               updateQty(cartItemView, cartItem);
             }
             updateTotals();
+            activity().tracker.publish("click:cart_remove", "productId", cartItem.getProduct().getProductId());
           }
         });
       }
@@ -159,16 +166,15 @@ public class CheckoutActivity extends BaseActivity {
       View view = inflater.inflate(R.layout.fragment_login, container, false);
       created(view);
       updateTotals();
-      final BaseActivity activity = (BaseActivity)getActivity();
-
 
       aq.id(R.id.btn_prev).clicked(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          getActivity().getSupportFragmentManager()
+          activity().getSupportFragmentManager()
               .beginTransaction()
               .replace(R.id.fragment_container, new CartFragment())
               .commit();
+          activity().tracker.publish("click:back", "fragment", CartFragment.class.getSimpleName());
         }
       });
 
@@ -180,15 +186,15 @@ public class CheckoutActivity extends BaseActivity {
 
           String email = aq.id(R.id.login_email).getText().toString();
           String pwd = aq.id(R.id.login_password).getText().toString();
-          activity.userManager.userLogin(email, pwd);
-          activity.tracker.publish("click:login");
-          activity.invalidateOptionsMenu();
+          activity().userManager.userLogin(email, pwd);
+          activity().tracker.publish("click:login", "fromCart", "true");
+          activity().invalidateOptionsMenu();
 
           // Add a small delay here to mimic an actual login
           new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-              getActivity().getSupportFragmentManager()
+              activity().getSupportFragmentManager()
                   .beginTransaction()
                   .replace(R.id.fragment_container, new PlaceOrderFragment())
                   .commit();
@@ -202,12 +208,10 @@ public class CheckoutActivity extends BaseActivity {
       EditText emailText = (EditText)view.findViewById(R.id.login_email);
       emailText.addTextChangedListener(new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
+        public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
         @Override
         public void afterTextChanged(Editable s) {
@@ -249,10 +253,60 @@ public class CheckoutActivity extends BaseActivity {
       aq.id(R.id.btn_prev).clicked(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          getActivity().getSupportFragmentManager()
+          activity().getSupportFragmentManager()
               .beginTransaction()
               .replace(R.id.fragment_container, new CartFragment())
               .commit();
+          activity().tracker.publish("click:back", "fragment", CartFragment.class.getSimpleName());
+        }
+      });
+      aq.id(R.id.btn_purchase).clicked(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Cart cart = activity().cart;
+          activity().orderNum = String.valueOf(System.currentTimeMillis()).substring(5);
+          activity().tracker.publish("click:purchase",
+              "total", cart.getTotal().toPlainString(),
+              "tax", cart.getTax().toPlainString(),
+              "shipping", "0.00", // Just get a value in there for now
+              "numItems", String.valueOf(cart.getItemCount()),
+              "orderNum", activity().orderNum // a pseudo sequence number
+          );
+          aq.id(R.id.btn_prev).enabled(false);
+          aq.id(R.id.btn_purchase).enabled(false);
+
+          new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              activity().getSupportFragmentManager()
+                  .beginTransaction()
+                  .replace(R.id.fragment_container, new ConfirmFragment())
+                  .commit();
+            }
+          }, 1000);
+        }
+      });
+
+      return view;
+    }
+  }
+
+  public static class ConfirmFragment extends TotalsFragment {
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+      View view = inflater.inflate(R.layout.fragment_confirm, container, false);
+      created(view);
+      activity().cart.clear();
+      activity().invalidateOptionsMenu();
+
+      aq.id(R.id.confirm_ordernum).text(activity().orderNum);
+      aq.id(R.id.btn_confirm).clicked(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Intent intent = new Intent(getContext(), CategoriesActivity.class);
+          startActivity(intent);
+          activity().tracker.publish("click:confirm");
         }
       });
 

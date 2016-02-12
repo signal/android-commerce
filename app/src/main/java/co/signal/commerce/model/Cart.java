@@ -89,6 +89,12 @@ public class Cart {
     return items.isEmpty();
   }
 
+  public void clear() {
+    cartChanged = true;
+    items.clear();
+    calculate();
+  }
+
   /**
    * Returnes true if the cart was modified since the last time this was called
    */
