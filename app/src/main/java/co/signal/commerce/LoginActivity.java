@@ -71,7 +71,7 @@ public class LoginActivity extends Activity {
         String email = aq.id(R.id.login_email).getText().toString();
         String pwd = aq.id(R.id.login_password).getText().toString();
         userManager.userLogin(email, pwd);
-        tracker.publish("click:login");
+        tracker.publish("event:login");
         finish();
       }
     });

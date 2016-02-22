@@ -24,6 +24,7 @@ import co.signal.commerce.api.CategoryParser;
 import co.signal.commerce.api.ProductImageUrlParser;
 import co.signal.commerce.api.UserManager;
 import co.signal.commerce.model.Cart;
+import co.signal.serverdirect.api.Hashes;
 import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.SignalInc;
 import co.signal.serverdirect.api.StandardField;
@@ -135,6 +136,12 @@ public class ApplicationModule {
 
     // Add something for a custom field, email will be added after a login
     config.addCustomField("demo", "true");
+    // Add the hashed email if the user is logged in
+    if (preferences.contains(UserManager.PREF_EMAIL)) {
+      config.addCustomField(UserManager.HASHED_EMAIL,
+          Hashes.sha256(preferences.getString(UserManager.PREF_EMAIL, "")));
+    }
+
     return config;
   }
 

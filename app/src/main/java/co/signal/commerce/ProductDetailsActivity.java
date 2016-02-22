@@ -159,7 +159,7 @@ public class ProductDetailsActivity extends BaseActivity {
     @Override
     public void onClick(View view) {
       cart.addProduct(product);
-      tracker.publish("cart:add",
+      tracker.publish("click:cart_add",
           "productId", product.getProductId(),
           "sku", product.getSku(),
           "price", product.getFinalPrice().toPlainString()

@@ -304,7 +304,8 @@ public class CheckoutActivity extends BaseActivity {
       aq.id(R.id.btn_confirm).clicked(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          Intent intent = new Intent(getContext(), CategoriesActivity.class);
+          Intent intent = new Intent(getContext(), MainActivity.class);
+          intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
           startActivity(intent);
           activity().tracker.publish("click:confirm");
         }

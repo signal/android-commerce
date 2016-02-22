@@ -36,7 +36,7 @@ public class BaseActivity extends AppCompatActivity {
   protected void onPostResume() {
     super.onPostResume();
     String name = this.getClass().getSimpleName();
-    tracker.publish("view:" + name);
+    tracker.publish("view:"+name, "ViewName", name);
 
     // The menu might have changed due to login or cart changes
     invalidateOptionsMenu();
@@ -87,6 +87,9 @@ public class BaseActivity extends AppCompatActivity {
       // Call publish above before UserManager call so logout has the hashed email
       userManager.userLogout();
       invalidateOptionsMenu();
+      return true;
+    } else if (id == R.id.action_profile) {
+      tracker.publish("profile:load");
       return true;
     } else if (id == android.R.id.home) {
       onBackPressed();
