@@ -6,6 +6,8 @@ import javax.inject.Singleton;
 import android.content.SharedPreferences;
 
 import static co.signal.commerce.module.ApplicationModule.ENV_PROD;
+import static co.signal.commerce.module.ApplicationModule.ENV_STAGE;
+import static co.signal.commerce.module.ApplicationModule.ENV_VAGRANT;
 
 /**
  * Constructs the Signal mobile endpoint from preference values
@@ -14,6 +16,8 @@ import static co.signal.commerce.module.ApplicationModule.ENV_PROD;
 public class EndpointBuilder {
   public static final String PROD_URL = "s.thebrighttag.com/mobile";
   public static final String STAGE_URL = "mobile-stage.signal.ninja/mobile";
+  public static final String DEV_URL = "tagserve.dv2.thebrighttag.com/mobile";
+  public static final String VAGRANT_URL = "tagserve.vg1.thebrighttag.com/mobile";
 
   @Inject
   SharedPreferences preferences;
@@ -27,7 +31,17 @@ public class EndpointBuilder {
   }
 
   public String buildFromEnvironment(String environment) {
-    return getProtocol() + "://" + (environment.equals(ENV_PROD) ? PROD_URL : STAGE_URL);
+    String url;
+    if (ENV_PROD.equals(environment)) {
+      url = PROD_URL;
+    } else if (ENV_STAGE.equals(environment)) {
+      url = STAGE_URL;
+    } else if (ENV_VAGRANT.equals(environment)) {
+      url = VAGRANT_URL;
+    } else {
+      url = DEV_URL;
+    }
+    return getProtocol() + "://" + url;
   }
 
   private String getProtocol() {
@@ -35,8 +49,14 @@ public class EndpointBuilder {
   }
 
   private String getUrl() {
-    return ENV_PROD.equals(preferences.getString("environment", ENV_PROD))
-        ? PROD_URL
-        : STAGE_URL;
+    String curEnv = preferences.getString("environment", ENV_PROD);
+    if (ENV_PROD.equals(curEnv)) {
+      return PROD_URL;
+    } else if (ENV_STAGE.equals(curEnv)) {
+      return STAGE_URL;
+    } else if (ENV_VAGRANT.equals(curEnv)) {
+      return VAGRANT_URL;
+    }
+    return DEV_URL;
   }
 }

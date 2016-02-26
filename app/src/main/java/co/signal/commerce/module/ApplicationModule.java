@@ -64,6 +64,8 @@ public class ApplicationModule {
   // Preference Values
   public static final String ENV_PROD = "Production";
   public static final String ENV_STAGE = "Staging";
+  public static final String ENV_DEV = "Dev";
+  public static final String ENV_VAGRANT = "Vagrant";
 
   // Static URLs
   private static final String BOUTIQUE_111_URL = "http://commerce.signal.ninja/api/rest/";

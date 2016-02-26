@@ -106,6 +106,8 @@
     <string-array name="pref_environment_values">
         <item>Production</item>
         <item>Staging</item>
+        <item>Development</item>
+        <item>Vagrant</item>
     </string-array>
 
     <string name="pref_title_protocol">Protocol</string>
