@@ -1,5 +1,7 @@
 package co.signal.commerce;
 
+import javax.inject.Inject;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,11 +21,14 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 
 import co.signal.commerce.api.UserManager;
+import co.signal.commerce.db.DBManager;
 import co.signal.commerce.model.Cart;
 import co.signal.commerce.model.CartItem;
 import co.signal.commerce.view.CartItemView;
 
 public class CheckoutActivity extends BaseActivity {
+  @Inject
+  DBManager dbManager;
 
   private String orderNum = null;
 
@@ -65,8 +70,8 @@ public class CheckoutActivity extends BaseActivity {
     }
 
     /**
-     * Convenience for all the fragment to get activity objects
-     * @return The current activity cast to BaseActivity
+     * Convenience for all the fragments to get activity objects
+     * @return The current activity cast to CheckoutActivity
      */
     CheckoutActivity activity() {
       return (CheckoutActivity)getActivity();
@@ -282,6 +287,7 @@ public class CheckoutActivity extends BaseActivity {
                   .beginTransaction()
                   .replace(R.id.fragment_container, new ConfirmFragment())
                   .commit();
+              activity().dbManager.deleteCart();
             }
           }, 1000);
         }

@@ -6,19 +6,24 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import co.signal.commerce.db.DBManager;
+
 /**
  * Shopping cart
  */
 public class Cart {
   public static final BigDecimal ZERO = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
+  private DBManager dbManager;
   private List<CartItem> items = new LinkedList<>();
   private BigDecimal cost = ZERO;
   private BigDecimal tax = ZERO;
   private BigDecimal total = ZERO;
   private boolean cartChanged = false;
 
-  public Cart() { }
+  public Cart(DBManager dbManager) {
+    this.dbManager = dbManager;
+  }
 
   public List<CartItem> getItems() {
     return items;
@@ -34,12 +39,15 @@ public class Cart {
     for (CartItem cartItem : items) {
       if (cartItem.getProduct().getProductId().equals(product.getProductId())) {
         cartItem.setQuantity(cartItem.getQuantity() + 1);
+        dbManager.updateCartItem(cartItem);
         found = true;
         break;
       }
     }
     if (!found) {
-      items.add(new CartItem(this, product));
+      CartItem cartItem = new CartItem(this, product);
+      items.add(cartItem);
+      dbManager.saveCartItem(cartItem);
     }
     calculate();
   }
@@ -52,12 +60,14 @@ public class Cart {
     cartChanged = true;
     Iterator<CartItem> iterator = items.iterator();
     while (iterator.hasNext()) {
-      CartItem item = iterator.next();
-      if (item.getProduct().getProductId().equals(productId)) {
-        if (item.getQuantity() == 1) {
+      CartItem cartItem = iterator.next();
+      if (cartItem.getProduct().getProductId().equals(productId)) {
+        if (cartItem.getQuantity() == 1) {
           iterator.remove();
+          dbManager.deleteCartItem(cartItem.getProduct().getProductId());
         } else {
-          item.setQuantity(item.getQuantity() - 1);
+          cartItem.setQuantity(cartItem.getQuantity() - 1);
+          dbManager.updateCartItem(cartItem);
         }
         break;
       }

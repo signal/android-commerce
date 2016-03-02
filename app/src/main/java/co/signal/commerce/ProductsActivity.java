@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import co.signal.commerce.api.ApiManager;
+import co.signal.commerce.db.DBManager;
 import co.signal.commerce.model.Product;
 import co.signal.commerce.view.ProductListView;
 import co.signal.util.SignalLogger;
@@ -28,6 +29,8 @@ public class ProductsActivity extends BaseActivity {
 
   @Inject
   ApiManager apiManager;
+  @Inject
+  DBManager dbManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +90,7 @@ public class ProductsActivity extends BaseActivity {
     protected List<Product> doInBackground(Void ... v) {
       List<Product> result = null;
       try {
+        dbManager.deleteProducts(categoryId);
         result = apiManager.getProducts(categoryId);
       } catch (Exception e) {
         Log.e("commerce", "Retrieve Products Failed", e);
@@ -109,6 +113,7 @@ public class ProductsActivity extends BaseActivity {
           "qty", String.valueOf(products.size()),
           "categoryId", categoryId);
 
+      dbManager.saveProducts(categoryId, products);
       drawProducts(products);
     }
   }

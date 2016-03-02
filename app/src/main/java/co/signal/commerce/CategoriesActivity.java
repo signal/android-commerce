@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import co.signal.commerce.api.ApiManager;
+import co.signal.commerce.db.DBManager;
 import co.signal.commerce.model.Category;
 import co.signal.commerce.view.CategoryView;
 import co.signal.util.SignalLogger;
@@ -31,6 +32,8 @@ public class CategoriesActivity extends BaseActivity {
 
   @Inject
   ApiManager apiManager;
+  @Inject
+  DBManager dbManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,7 @@ public class CategoriesActivity extends BaseActivity {
     protected List<Category> doInBackground(Void ... v) {
       List<Category> result = null;
       try {
+        dbManager.deleteCategories();
         if (categoryId == null) {
           result = apiManager.getMainCategories();
         } else {
@@ -94,6 +98,7 @@ public class CategoriesActivity extends BaseActivity {
           "type", categoryId == null ? "main" : "sub",
           "qty", String.valueOf(categories.size()),
           "categoryId", categoryId);
+      dbManager.saveCategories(categories);
 
       for (final Category category : categories) {
         CategoryView categoryView = new CategoryView(CategoriesActivity.this, null);

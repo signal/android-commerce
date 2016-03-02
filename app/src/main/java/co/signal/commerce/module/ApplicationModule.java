@@ -23,6 +23,8 @@ import co.signal.commerce.SettingsActivity;
 import co.signal.commerce.api.CategoryParser;
 import co.signal.commerce.api.ProductImageUrlParser;
 import co.signal.commerce.api.UserManager;
+import co.signal.commerce.db.DBHelper;
+import co.signal.commerce.db.DBManager;
 import co.signal.commerce.model.Cart;
 import co.signal.serverdirect.api.Hashes;
 import co.signal.serverdirect.api.SignalConfig;
@@ -44,6 +46,7 @@ import dagger.Provides;
     CheckoutActivity.class,
     UserManager.class,
     EndpointBuilder.class,
+    DBManager.class,
     SettingsActivity.class,
     SettingsActivity.GeneralPreferenceFragment.class,
     SettingsActivity.ControlsPreferenceFragment.class,
@@ -102,6 +105,11 @@ public class ApplicationModule {
   @Provides @Singleton
   public SharedPreferences provideSharedPreferences() {
     return preferences;
+  }
+
+  @Provides @Singleton
+  public DBHelper provideDBHelper() {
+    return new DBHelper(appContext);
   }
 
   @Provides @Singleton
@@ -192,8 +200,8 @@ public class ApplicationModule {
   }
 
   @Provides @Singleton
-  public Cart provideShoppingCart() {
-    return new Cart();
+  public Cart provideShoppingCart(DBManager dbManager) {
+    return new Cart(dbManager);
   }
 
   /**
