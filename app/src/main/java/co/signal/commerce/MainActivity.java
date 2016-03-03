@@ -11,9 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import co.signal.commerce.module.ApplicationModule;
+import co.signal.serverdirect.api.StandardField;
+
 import static co.signal.commerce.module.ApplicationModule.ENV_STAGE;
 
 public class MainActivity extends BaseActivity {
@@ -27,6 +30,9 @@ public class MainActivity extends BaseActivity {
     setContentView(R.layout.activity_main);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+
+    String ver = "v" + StandardField.ApplicationVersion.getValue(this);
+    ((TextView)findViewById(R.id.label_version)).setText(ver);
 
     setupPage();
   }
