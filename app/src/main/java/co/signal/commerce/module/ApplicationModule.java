@@ -123,6 +123,7 @@ public class ApplicationModule {
         .setBatteryPercentage(getPrefInt("battery_percentage", 20))
         .setSocketConnectTimeout(getPrefLong("socket_connect_to", 10000))
         .setSocketReadTimeout(getPrefLong("socket_read_to", 5000))
+        .setProfileDataEnabled(preferences.getBoolean("enable_profile", false))
         .setPublishInBackground(preferences.getBoolean("enable_background", false))
         .setNetworkWifiOnly(preferences.getBoolean("enable_wifi", false))
         .setLifecycleEventsEnabled(preferences.getBoolean("enable_lifecycle", true))

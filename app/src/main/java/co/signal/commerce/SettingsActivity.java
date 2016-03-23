@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import com.google.common.collect.ImmutableList;
 
-import co.signal.commerce.module.ApplicationModule;
 import co.signal.commerce.module.EndpointBuilder;
 import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.StandardField;
@@ -156,6 +155,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         void updateConfig(Preference preference, Object value) {
           config.setLifecycleEventsEnabled((Boolean) value);
+        }
+      });
+      findPreference("enable_profile").setOnPreferenceChangeListener(new SignalConfigUpdateListener() {
+        @Override
+        void updateConfig(Preference preference, Object value) {
+          config.setProfileDataEnabled((Boolean) value);
         }
       });
       findPreference("enable_background").setOnPreferenceChangeListener(new SignalConfigUpdateListener() {

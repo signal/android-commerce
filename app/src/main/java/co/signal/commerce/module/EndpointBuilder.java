@@ -16,8 +16,9 @@ import static co.signal.commerce.module.ApplicationModule.ENV_VAGRANT;
 public class EndpointBuilder {
   public static final String PROD_URL = "s.thebrighttag.com/mobile";
   public static final String STAGE_URL = "mobile-stage.signal.ninja/mobile";
+//  public static final String STAGE_URL = "tagserve.stage.thebrighttag.com/mobile";
   public static final String DEV_URL = "tagserve.dv2.thebrighttag.com/mobile";
-  public static final String VAGRANT_URL = "tagserve.vg1.thebrighttag.com/mobile";
+  public static final String VAGRANT_URL = "10.200.2.6:8080/mobile";
 
   @Inject
   SharedPreferences preferences;

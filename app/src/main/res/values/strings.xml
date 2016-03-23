@@ -18,6 +18,7 @@
     <string name="pref_default_site_id">NotSet</string>
 
     <string name="pref_title_lifecycle">Lifecycle Events</string>
+    <string name="pref_title_profile">Profile Data</string>
     <string name="pref_title_background">Background Sending</string>
     <string name="pref_title_wifi_only">Wifi Only</string>
 
