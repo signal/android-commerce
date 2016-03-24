@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import co.signal.commerce.api.UserManager;
 import co.signal.commerce.db.DBManager;
 
 /**
@@ -15,14 +16,15 @@ public class Cart {
   public static final BigDecimal ZERO = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
   private DBManager dbManager;
+  private UserManager userManager;
   private List<CartItem> items = new LinkedList<>();
   private BigDecimal cost = ZERO;
   private BigDecimal tax = ZERO;
   private BigDecimal total = ZERO;
-  private boolean cartChanged = false;
 
-  public Cart(DBManager dbManager) {
+  public Cart(DBManager dbManager, UserManager userManager) {
     this.dbManager = dbManager;
+    this.userManager = userManager;
   }
 
   public List<CartItem> getItems() {
@@ -34,7 +36,6 @@ public class Cart {
    * @param product The Product object
    */
   public void addProduct(Product product) {
-    cartChanged = true;
     boolean found = false;
     for (CartItem cartItem : items) {
       if (cartItem.getProduct().getProductId().equals(product.getProductId())) {
@@ -57,7 +58,6 @@ public class Cart {
    * @param productId The ID of the product to remove
    */
   public void removeProduct(String productId) {
-    cartChanged = true;
     Iterator<CartItem> iterator = items.iterator();
     while (iterator.hasNext()) {
       CartItem cartItem = iterator.next();
@@ -100,18 +100,8 @@ public class Cart {
   }
 
   public void clear() {
-    cartChanged = true;
     items.clear();
     calculate();
-  }
-
-  /**
-   * Returnes true if the cart was modified since the last time this was called
-   */
-  public boolean wasCartChanged() {
-    boolean result = cartChanged;
-    cartChanged = false;
-    return result;
   }
 
   private void calculate() {
@@ -120,8 +110,12 @@ public class Cart {
     for (CartItem item : items) {
       Product product = item.getProduct();
       BigDecimal qty = item.getQuantity() == 1 ? BigDecimal.ONE : new BigDecimal(item.getQuantity());
-      newCost = newCost.add(product.getFinalPrice().multiply(qty));
-      newTotal = newCost.add(product.getFinalPriceWithTax().multiply(qty));
+      BigDecimal price = userManager.isPreferred()
+          ? product.getFinalPrice() : product.getRegularPrice();
+      BigDecimal priceWithTax = userManager.isPreferred()
+          ? product.getFinalPriceWithTax() : product.getRegularPriceWithTax();
+      newCost = newCost.add(price.multiply(qty));
+      newTotal = newTotal.add(priceWithTax.multiply(qty));
     }
     cost = newCost;
     total = newTotal;

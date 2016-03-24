@@ -1,5 +1,6 @@
 package co.signal.commerce;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.androidquery.AQuery;
 
 import co.signal.commerce.api.ApiManager;
+import co.signal.commerce.api.UserManager;
 import co.signal.commerce.model.Product;
 import co.signal.util.SignalLogger;
 
@@ -31,6 +33,8 @@ public class ProductDetailsActivity extends BaseActivity {
 
   @Inject
   ApiManager apiManager;
+  @Inject
+  UserManager userManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +78,8 @@ public class ProductDetailsActivity extends BaseActivity {
     aq.id(R.id.product_title).text(product.getTitle());
     aq.id(R.id.product_description).text(product.getDescription());
     aq.id(R.id.product_details).text(product.getDetails());
-    aq.id(R.id.product_price).text("$" + product.getFinalPrice().toPlainString()).visible();
+    BigDecimal price = userManager.isPreferred() ? product.getFinalPrice() : product.getRegularPrice();
+    aq.id(R.id.product_price).text("$" + price.toPlainString()).visible();
     aq.id(product.isInStock() ? R.id.btn_add_to_cart : R.id.product_out_of_stock).visible();
     aq.id(R.id.btn_add_to_cart).clicked(new AddToCartClickListener());
   }
@@ -159,10 +164,11 @@ public class ProductDetailsActivity extends BaseActivity {
     @Override
     public void onClick(View view) {
       cart.addProduct(product);
+      BigDecimal price = userManager.isPreferred() ? product.getFinalPrice() : product.getRegularPrice();
       tracker.publish("click:cart_add",
           "productId", product.getProductId(),
           "sku", product.getSku(),
-          "price", product.getFinalPrice().toPlainString()
+          "price", price.toPlainString()
       );
       Snackbar.make(view, product.getTitle() + " added to cart.", Snackbar.LENGTH_LONG)
           .setAction("Action", null)

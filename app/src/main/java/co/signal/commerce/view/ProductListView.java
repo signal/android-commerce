@@ -1,5 +1,7 @@
 package co.signal.commerce.view;
 
+import java.math.BigDecimal;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
@@ -20,10 +22,11 @@ public class ProductListView extends LinearLayout {
     inflate(context, R.layout.product_list_item, this);
   }
 
-  public void setProduct(Product product) {
+  public void setProduct(Product product, boolean preferred) {
     AQuery aq = new AQuery(this);
     aq.id(R.id.product_text).text(product.getTitle());
-    aq.id(R.id.product_price).text("$" + product.getFinalPrice().toPlainString());
     aq.id(R.id.product_thumbnail).image(product.getThumbnailUrl(), true, true);
+    BigDecimal price = preferred ? product.getFinalPrice() : product.getRegularPrice();
+    aq.id(R.id.product_price).text("$" + price.toPlainString());
   }
 }

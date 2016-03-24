@@ -29,6 +29,8 @@ import co.signal.commerce.view.CartItemView;
 public class CheckoutActivity extends BaseActivity {
   @Inject
   DBManager dbManager;
+  @Inject
+  UserManager userManager;
 
   private String orderNum = null;
 
@@ -125,7 +127,7 @@ public class CheckoutActivity extends BaseActivity {
       final Cart cart = activity().getCart();
       for (final CartItem cartItem : cart.getItems()) {
         final CartItemView cartItemView = new CartItemView(getContext(), null);
-        cartItemView.setCartItem(cartItem);
+        cartItemView.setCartItem(cartItem, activity().userManager.isPreferred());
         cartList.addView(cartItemView);
         cartItemView.findViewById(R.id.cart_add).setOnClickListener(new View.OnClickListener() {
           @Override

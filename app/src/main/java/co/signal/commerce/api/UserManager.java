@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import co.signal.serverdirect.api.Hashes;
 import co.signal.serverdirect.api.SignalConfig;
+import co.signal.serverdirect.api.SignalProfileStore;
 
 /**
  * A user manager class that manages the user account and associated data.
@@ -17,12 +18,12 @@ public class UserManager {
   public static final String PREF_EMAIL = "user_email";
   public static final String HASHED_EMAIL = "uid-hashed-email-sha256";
 
-  private boolean loginPageViewed = false;
-
   @Inject
   SharedPreferences prefs;
   @Inject
   SignalConfig config;
+  @Inject
+  SignalProfileStore profileStore;
 
   public boolean userLogin(String email, String password) {
     // A real app would probably encrypt this value before persisting it
@@ -43,25 +44,9 @@ public class UserManager {
   public void userLogout() {
     prefs.edit().remove(PREF_EMAIL).apply();
     config.removeCustomField(HASHED_EMAIL);
+    profileStore.clear();
     // TODO: Call server
   }
-
-  /**
-   * Called whenever the login activity is viewed and maybe the user logged in
-   */
-  public void loginViewed() {
-    loginPageViewed = true;
-  }
-
-  /**
-   * Returnes true if the last activity was the LoginActivity
-   */
-  public boolean wasLoginViewed() {
-    boolean result = loginPageViewed;
-    loginPageViewed = false;
-    return result;
-  }
-
 
   public static boolean isValidEmail(String target) {
     if (TextUtils.isEmpty(target)) {
@@ -69,6 +54,13 @@ public class UserManager {
     }
     //android Regex to check the email address Validation
     return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+  }
+
+  public boolean isPreferred() {
+    if (!isLoggedIn()) {
+      return false;
+    }
+    return "true".equals(profileStore.getData("Preferred"));
   }
 }
 

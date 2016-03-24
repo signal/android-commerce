@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import co.signal.commerce.api.ApiManager;
+import co.signal.commerce.api.UserManager;
 import co.signal.commerce.db.DBManager;
 import co.signal.commerce.model.Product;
 import co.signal.commerce.view.ProductListView;
@@ -31,6 +32,8 @@ public class ProductsActivity extends BaseActivity {
   ApiManager apiManager;
   @Inject
   DBManager dbManager;
+  @Inject
+  UserManager userManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +73,7 @@ public class ProductsActivity extends BaseActivity {
   private void drawProducts(List<Product> products) {
     for (final Product product : products) {
       ProductListView view = new ProductListView(ProductsActivity.this);
-      view.setProduct(product);
+      view.setProduct(product, userManager.isPreferred());
       view.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {

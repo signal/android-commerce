@@ -158,7 +158,7 @@ public class DBManager {
       cv.put("qty", cartItem.getQuantity());
       int id = database.update(DBHelper.CART_TABLE, cv, "product_id=?", new String[]{cartItem.getProduct().getProductId()});
       if (id != 1) {
-        SignalLogger.ef(SignalLogger.STORE_TAG, "No cart records updated | %d", cartItem.getProduct().getProductId());
+        SignalLogger.ef(SignalLogger.STORE_TAG, "No cart records updated | %s", cartItem.getProduct().getProductId());
       }
       database.setTransactionSuccessful();
       SignalLogger.df(SignalLogger.STORE_TAG, "Updated CartItem | %s | %d",

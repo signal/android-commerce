@@ -26,7 +26,6 @@ public class LoginActivity extends Activity {
     super.onCreate(savedInstanceState);
     ((CommerceApplication)getApplication()).inject(this);
     tracker.publish("view:LoginActivity");
-    userManager.loginViewed();
 
     setContentView(R.layout.activity_login);
     final AQuery aq = new AQuery(this);

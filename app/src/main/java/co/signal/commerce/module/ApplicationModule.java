@@ -29,6 +29,7 @@ import co.signal.commerce.model.Cart;
 import co.signal.serverdirect.api.Hashes;
 import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.SignalInc;
+import co.signal.serverdirect.api.SignalProfileStore;
 import co.signal.serverdirect.api.StandardField;
 import co.signal.serverdirect.api.Tracker;
 import co.signal.util.SignalLogger;
@@ -178,6 +179,11 @@ public class ApplicationModule {
     return signalInc.getTracker(siteId);
   }
 
+  @Provides @Singleton
+  public SignalProfileStore provideProfileStore(SignalInc signalInc) {
+    return signalInc.getProfileStore();
+  }
+
   private long getPrefLong(String key, long defaultValue) {
     // Stored as a string via the settings pages, so need to convert back and forth
     return Long.parseLong(preferences.getString(key, String.valueOf(defaultValue)));
@@ -201,8 +207,8 @@ public class ApplicationModule {
   }
 
   @Provides @Singleton
-  public Cart provideShoppingCart(DBManager dbManager) {
-    return new Cart(dbManager);
+  public Cart provideShoppingCart(DBManager dbManager, UserManager userManager) {
+    return new Cart(dbManager, userManager);
   }
 
   /**
