@@ -44,8 +44,12 @@ public class UserManager {
   public void userLogout() {
     prefs.edit().remove(PREF_EMAIL).apply();
     config.removeCustomField(HASHED_EMAIL);
-    profileStore.clear();
+    clear();
     // TODO: Call server
+  }
+
+  public void clear() {
+    profileStore.clear();
   }
 
   public static boolean isValidEmail(String target) {

@@ -5,7 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="action_login">Login</string>
     <string name="action_logout">Logout</string>
-    <string name="action_profile">Profile</string>
+    <string name="action_profile_load">Profile Load</string>
+    <string name="action_profile_clear">Profile Clear</string>
 
     <string name="title_activity_settings">Signal SDK Settings</string>
     <string name="powered_by">Powered by:</string>
@@ -148,5 +149,7 @@
 
     <string name="confirm_title">Thank you for your order:</string>
     <string name="confirm_number">Order Number:</string>
+
+    <string name="title_activity_profile">Profile Data</string>
 
 </resources>

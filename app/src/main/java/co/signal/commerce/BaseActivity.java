@@ -88,8 +88,12 @@ public class BaseActivity extends AppCompatActivity {
       userManager.userLogout();
       invalidateOptionsMenu();
       return true;
-    } else if (id == R.id.action_profile) {
+    } else if (id == R.id.action_profile_load) {
+//      startActivity(new Intent(this, ProfileDataActivity.class));
       tracker.publish("profile:load");
+      return true;
+    } else if (id == R.id.action_profile_clear) {
+      userManager.clear();
       return true;
     } else if (id == android.R.id.home) {
       onBackPressed();
