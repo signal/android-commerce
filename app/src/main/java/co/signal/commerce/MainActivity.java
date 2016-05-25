@@ -18,6 +18,7 @@ import co.signal.commerce.module.ApplicationModule;
 import co.signal.serverdirect.api.StandardField;
 
 import static co.signal.commerce.module.ApplicationModule.ENV_STAGE;
+import static co.signal.commerce.module.Tracking.*;
 
 public class MainActivity extends BaseActivity {
 
@@ -43,6 +44,7 @@ public class MainActivity extends BaseActivity {
       @Override
       public void onClick(View v) {
         startActivity(new Intent(v.getContext(), CategoriesActivity.class));
+        tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, "start");
       }
     });
 
@@ -65,7 +67,7 @@ public class MainActivity extends BaseActivity {
       try {
         Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(myIntent);
-        tracker.publish("event:web", "url", url);
+        tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, "web", LABEL, "url", VALUE, url);
       } catch (ActivityNotFoundException e) {
         Toast.makeText(MainActivity.this,
             "No application can handle this request. Please install a web browser",

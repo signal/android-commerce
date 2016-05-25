@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 
 import co.signal.commerce.CategoriesActivity;
 import co.signal.commerce.CheckoutActivity;
+import co.signal.commerce.CommerceApplication;
 import co.signal.commerce.LoginActivity;
 import co.signal.commerce.MainActivity;
 import co.signal.commerce.ProductDetailsActivity;
@@ -54,7 +55,8 @@ import dagger.Provides;
     SettingsActivity.GeneralPreferenceFragment.class,
     SettingsActivity.ControlsPreferenceFragment.class,
     SettingsActivity.StandardFieldPreferenceFragment.class,
-    SettingsActivity.LoggingPreferenceFragment.class
+    SettingsActivity.LoggingPreferenceFragment.class,
+      CommerceApplication.TestInject.class
   }
 )
 public class ApplicationModule {
@@ -77,6 +79,7 @@ public class ApplicationModule {
   private static final String BOUTIQUE_111_URL = "http://commerce.signal.ninja/api/rest/";
   private static final String RE_THUMB_URL = "http://api.rethumb.com/v1/square/";
 
+  private static final Tracker NULL_TRACKER = new NullTracker();
   private Context appContext;
   private SharedPreferences preferences;
 
@@ -131,7 +134,10 @@ public class ApplicationModule {
         .setNetworkWifiOnly(preferences.getBoolean("enable_wifi", false))
         .setLifecycleEventsEnabled(preferences.getBoolean("enable_lifecycle", true))
         .setDebug(preferences.getBoolean("debug_enabled", true))
-        .setVerbose(preferences.getBoolean("verbose_enabled", false));
+        .setVerbose(preferences.getBoolean("verbose_enabled", false))
+        .setMemoryDbFallbackEnabled(true)
+        .setAndroidIdEnabled(false)
+        .setAdIdEnabled(false);
 
     // Don't send lifecycle events until a proper siteId is set, causes issues with the listener
     if (TextUtils.isEmpty(siteId) || "notset".equals(siteId.toLowerCase())) {
@@ -213,37 +219,4 @@ public class ApplicationModule {
     return new Cart(dbManager, userManager);
   }
 
-  /**
-   * Use a null tracker until the SiteId is set.
-   */
-  private static final Tracker NULL_TRACKER = new Tracker() {
-    @Override
-    public String getSiteId() { return null; }
-
-    @Override
-    public boolean isDebug() { return false; }
-
-    @Override
-    public void setDebug(boolean b) { }
-
-    @Override
-    public void publish(String event, String... values) {
-      SignalLogger.df("tracker", "NullTracker | %s | %s", event, Arrays.toString(values));
-    }
-
-    @Override
-    public void publish(String event, Map<String, String> values) {
-      SignalLogger.df("tracker", "NullTracker | %s | %s ", event, values);
-    }
-
-    @Override
-    public void addStandardFields(StandardField... standardFields) {
-      SignalLogger.df("tracker", "NullTracker | stdflds: %s", Arrays.toString(standardFields));
-    }
-
-    @Override
-    public void addCustomField(String key, String value) {
-      SignalLogger.df("tracker", "NullTracker | custom: %s -> %s", key, value);
-    }
-  };
 }

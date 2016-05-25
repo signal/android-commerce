@@ -9,11 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.androidquery.AQuery;
-
 import co.signal.commerce.api.UserManager;
 import co.signal.commerce.model.Cart;
 import co.signal.serverdirect.api.Tracker;
+
+import static co.signal.commerce.module.Tracking.*;
 
 /**
  * Base class for all Activity instances to initiate dependency injection
@@ -36,7 +36,7 @@ public class BaseActivity extends AppCompatActivity {
   protected void onPostResume() {
     super.onPostResume();
     String name = this.getClass().getSimpleName();
-    tracker.publish("view:"+name, "ViewName", name);
+    tracker.publish(TRACK_VIEW, VIEW_NAME, name);
 
     // The menu might have changed due to login or cart changes
     invalidateOptionsMenu();
@@ -71,28 +71,34 @@ public class BaseActivity extends AppCompatActivity {
             .show();
       } else {
         startActivity(new Intent(this, CheckoutActivity.class));
-        tracker.publish("click:menu_checkout");
+        tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "checkout");
       }
       return true;
     } else if (id == R.id.action_settings) {
       startActivity(new Intent(this, SettingsActivity.class));
-      tracker.publish("click:menu_settings");
+      tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "settings");
       return true;
     } else if (id == R.id.action_login) {
       startActivity(new Intent(this, LoginActivity.class));
-      tracker.publish("click:menu_login");
+      tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "login");
       return true;
     } else if (id == R.id.action_logout) {
-      tracker.publish("click:menu_logout");
+      tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "logout");
       // Call publish above before UserManager call so logout has the hashed email
       userManager.userLogout();
       invalidateOptionsMenu();
       return true;
     } else if (id == R.id.action_profile_load) {
+      // View needs work before we can display the data
 //      startActivity(new Intent(this, ProfileDataActivity.class));
+
+      // First event to retrieve the profile data, second event for analytics
+      // Too tricky on the server side to configure both with single event
       tracker.publish("profile:load");
+      tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "profileLoad");
       return true;
     } else if (id == R.id.action_profile_clear) {
+      tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "profileClear");
       userManager.clear();
       return true;
     } else if (id == android.R.id.home) {

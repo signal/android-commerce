@@ -15,6 +15,8 @@ import com.androidquery.AQuery;
 import co.signal.commerce.api.UserManager;
 import co.signal.serverdirect.api.Tracker;
 
+import static co.signal.commerce.module.Tracking.*;
+
 public class LoginActivity extends Activity {
   @Inject
   Tracker tracker;
@@ -25,7 +27,7 @@ public class LoginActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ((CommerceApplication)getApplication()).inject(this);
-    tracker.publish("view:LoginActivity");
+    tracker.publish(TRACK_VIEW, VIEW_NAME, "LoginActivity");
 
     setContentView(R.layout.activity_login);
     final AQuery aq = new AQuery(this);
@@ -70,7 +72,8 @@ public class LoginActivity extends Activity {
         String email = aq.id(R.id.login_email).getText().toString();
         String pwd = aq.id(R.id.login_password).getText().toString();
         userManager.userLogin(email, pwd);
-        tracker.publish("event:login");
+        tracker.publish(TRACK_EVENT, CATEGORY, USER, ACTION, LOGIN);
+
         finish();
       }
     });
@@ -78,7 +81,7 @@ public class LoginActivity extends Activity {
     aq.id(R.id.btn_cancel).clicked(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        tracker.publish("click:cancel_login");
+        tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, "cancel_login");
         finish();
       }
     });

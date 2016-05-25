@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -13,7 +12,6 @@ import android.preference.PreferenceActivity;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MenuItem;
 
 import java.util.List;
@@ -26,6 +24,8 @@ import co.signal.commerce.module.EndpointBuilder;
 import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.StandardField;
 import co.signal.serverdirect.api.Tracker;
+
+import static co.signal.commerce.module.Tracking.*;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -54,7 +54,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
   protected void onPostResume() {
     super.onPostResume();
     String name = this.getClass().getSimpleName();
-    tracker.publish("view:" + name);
+    tracker.publish(TRACK_VIEW, VIEW_NAME, name);
   }
 
   /**

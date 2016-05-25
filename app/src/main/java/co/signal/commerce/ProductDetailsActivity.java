@@ -24,6 +24,8 @@ import co.signal.commerce.api.UserManager;
 import co.signal.commerce.model.Product;
 import co.signal.util.SignalLogger;
 
+import static co.signal.commerce.module.Tracking.*;
+
 public class ProductDetailsActivity extends BaseActivity {
   private AQuery aq;
   private Product product;
@@ -120,7 +122,13 @@ public class ProductDetailsActivity extends BaseActivity {
       if (productDetails != null) {
         product = productDetails;
         SignalLogger.df("product", "Retrieved product from %s (%s)", productId, productTitle);
-        tracker.publish("load:productDetails", "productId", productId);
+        tracker.publish(TRACK_EVENT,
+            CATEGORY, LOAD,
+            ACTION, DETAILS,
+            LABEL, "productId",
+            VALUE, productId,
+            "productId", productId);
+
         drawView();
       } else {
         Toast.makeText(ProductDetailsActivity.this,
@@ -155,7 +163,12 @@ public class ProductDetailsActivity extends BaseActivity {
       }
 
       SignalLogger.df("product", "Retrieved %d images from %s (%s)", imageUrls.size(), productId, productTitle);
-      tracker.publish("load:productImages", "productId", productId, "qty", String.valueOf(imageUrls.size()));
+      tracker.publish(TRACK_EVENT,
+          CATEGORY, LOAD,
+          ACTION, IMAGES,
+          LABEL, RESULTS,
+          VALUE, String.valueOf(imageUrls.size()),
+          "productId", productId);
       drawImages(imageUrls);
     }
   }
@@ -165,11 +178,14 @@ public class ProductDetailsActivity extends BaseActivity {
     public void onClick(View view) {
       cart.addProduct(product);
       BigDecimal price = userManager.isPreferred() ? product.getFinalPrice() : product.getRegularPrice();
-      tracker.publish("click:cart_add",
-          "productId", product.getProductId(),
+      tracker.publish(TRACK_EVENT,
+          CATEGORY, SHOP,
+          ACTION, CART_ADD,
+          LABEL, "productId",
+          VALUE, productId,
+          "productId", productId,
           "sku", product.getSku(),
-          "price", price.toPlainString()
-      );
+          "price", price.toPlainString());
       Snackbar.make(view, product.getTitle() + " added to cart.", Snackbar.LENGTH_LONG)
           .setAction("Action", null)
           .show();

@@ -7,11 +7,8 @@ import javax.inject.Inject;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -21,6 +18,8 @@ import co.signal.commerce.db.DBManager;
 import co.signal.commerce.model.Category;
 import co.signal.commerce.view.CategoryView;
 import co.signal.util.SignalLogger;
+
+import static co.signal.commerce.module.Tracking.*;
 
 public class CategoriesActivity extends BaseActivity {
   public static final String CATEGORY_ID = "categoryId";
@@ -94,10 +93,14 @@ public class CategoriesActivity extends BaseActivity {
       }
 
       SignalLogger.df("category", "Retrieved %d categories from %s", categories.size(), categoryId);
-      tracker.publish("load:categories",
-          "type", categoryId == null ? "main" : "sub",
-          "qty", String.valueOf(categories.size()),
+      tracker.publish(TRACK_EVENT,
+          CATEGORY, LOAD,
+          ACTION, CATEGORIES,
+          LABEL, RESULTS,
+          VALUE, String.valueOf(categories.size()),
+          "categoryType", categoryId == null ? "main" : "sub",
           "categoryId", categoryId);
+
       dbManager.saveCategories(categories);
 
       for (final Category category : categories) {
@@ -110,10 +113,12 @@ public class CategoriesActivity extends BaseActivity {
             Intent intent;
             if (category.getChildren() > 0) {
               intent = new Intent(CategoriesActivity.this, CategoriesActivity.class);
-              tracker.publish("click:category", "type", "main");
+              tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, CATEGORY,
+                  LABEL, "categoryId", VALUE, "main", "categoryId", "main");
             } else {
               intent = new Intent(CategoriesActivity.this, ProductsActivity.class);
-              tracker.publish("click:category", "type", "sub", "categoryId", category.getCategoryId());
+              tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, CATEGORY,
+                  LABEL, "categoryId", VALUE, category.getCategoryId(), "categoryId", category.getCategoryId());
             }
             intent.putExtra(CATEGORY_ID, category.getCategoryId());
             intent.putExtra(CATEGORY_TITLE, category.getName());

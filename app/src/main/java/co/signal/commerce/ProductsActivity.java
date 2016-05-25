@@ -20,6 +20,8 @@ import co.signal.commerce.model.Product;
 import co.signal.commerce.view.ProductListView;
 import co.signal.util.SignalLogger;
 
+import static co.signal.commerce.module.Tracking.*;
+
 public class ProductsActivity extends BaseActivity {
   public static final String PRODUCT_ID = "productId";
   public static final String PRODUCT_TITLE = "productTitle";
@@ -81,7 +83,9 @@ public class ProductsActivity extends BaseActivity {
           intent.putExtra(PRODUCT_ID, product.getProductId());
           intent.putExtra(PRODUCT_TITLE, categoryTitle);
           startActivity(intent);
-          tracker.publish("click:product", "productId", product.getProductId());
+          tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, PRODUCT,
+              LABEL, "productId", VALUE, product.getProductId(), "productId", product.getProductId());
+
         }
       });
       productList.addView(view);
@@ -112,8 +116,11 @@ public class ProductsActivity extends BaseActivity {
         return;
       }
       SignalLogger.df("products", "Retrieved %d products from %s", products.size(), categoryId);
-      tracker.publish("load:products",
-          "qty", String.valueOf(products.size()),
+      tracker.publish(TRACK_EVENT,
+          CATEGORY, LOAD,
+          ACTION, PRODUCTS,
+          LABEL, RESULTS,
+          VALUE, String.valueOf(products.size()),
           "categoryId", categoryId);
 
       dbManager.saveProducts(categoryId, products);
