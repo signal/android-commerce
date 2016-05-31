@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
+import com.google.common.collect.ImmutableMap;
 
 import co.signal.commerce.api.ApiManager;
 import co.signal.commerce.api.UserManager;
@@ -122,13 +123,7 @@ public class ProductDetailsActivity extends BaseActivity {
       if (productDetails != null) {
         product = productDetails;
         SignalLogger.df("product", "Retrieved product from %s (%s)", productId, productTitle);
-        tracker.publish(TRACK_EVENT,
-            CATEGORY, LOAD,
-            ACTION, DETAILS,
-            LABEL, "productId",
-            VALUE, productId,
-            "productId", productId);
-
+        trackerWrapper.trackEvent(LOAD, DETAILS, "productId", Integer.valueOf(productId), "productId", productId);
         drawView();
       } else {
         Toast.makeText(ProductDetailsActivity.this,
@@ -163,12 +158,7 @@ public class ProductDetailsActivity extends BaseActivity {
       }
 
       SignalLogger.df("product", "Retrieved %d images from %s (%s)", imageUrls.size(), productId, productTitle);
-      tracker.publish(TRACK_EVENT,
-          CATEGORY, LOAD,
-          ACTION, IMAGES,
-          LABEL, RESULTS,
-          VALUE, String.valueOf(imageUrls.size()),
-          "productId", productId);
+      trackerWrapper.trackEvent(LOAD, IMAGES, RESULTS, imageUrls.size(), "productId", productId);
       drawImages(imageUrls);
     }
   }
@@ -178,14 +168,8 @@ public class ProductDetailsActivity extends BaseActivity {
     public void onClick(View view) {
       cart.addProduct(product);
       BigDecimal price = userManager.isPreferred() ? product.getFinalPrice() : product.getRegularPrice();
-      tracker.publish(TRACK_EVENT,
-          CATEGORY, SHOP,
-          ACTION, CART_ADD,
-          LABEL, "productId",
-          VALUE, productId,
-          "productId", productId,
-          "sku", product.getSku(),
-          "price", price.toPlainString());
+      trackerWrapper.trackEvent(SHOP, CART_ADD, "productId", Integer.valueOf(productId),
+          ImmutableMap.of("productId", productId, "sku", product.getSku(), "price", price.toPlainString()));
       Snackbar.make(view, product.getTitle() + " added to cart.", Snackbar.LENGTH_LONG)
           .setAction("Action", null)
           .show();

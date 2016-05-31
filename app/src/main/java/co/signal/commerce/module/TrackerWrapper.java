@@ -1,58 +1,78 @@
 package co.signal.commerce.module;
 
-import java.util.List;
 import java.util.Map;
 
-import co.signal.serverdirect.api.StandardField;
-import co.signal.serverdirect.api.Tracker;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 /**
  * Wrapper class to wrap multiple trackers in the event more than one is active
  */
-public class TrackerWrapper implements Tracker {
-  private List<Tracker> trackers;
+public class TrackerWrapper implements Tracking {
+  private co.signal.serverdirect.api.Tracker signalTracker;
+  private com.google.android.gms.analytics.Tracker gaTracker;
+  private boolean gaEnabled;
 
-  public TrackerWrapper(List<Tracker> trackers) {
-    this.trackers = trackers;
+  public TrackerWrapper(co.signal.serverdirect.api.Tracker signalTracker,
+                        com.google.android.gms.analytics.Tracker gaTracker, boolean gaEnabled) {
+    this.signalTracker = signalTracker;
+    this.gaTracker = gaTracker;
+    this.gaEnabled = gaEnabled;
   }
 
-  @Override
-  public String getSiteId() {
-    throw new UnsupportedOperationException("Not available in wrapper tracker");
-  }
+  public void trackView(String viewName) {
+    // Signal
+    signalTracker.publish(TRACK_VIEW, VIEW_NAME, viewName);
 
-  @Override
-  public boolean isDebug() {
-    throw new UnsupportedOperationException("Not available in wrapper tracker");
-  }
-
-  @Override
-  public void setDebug(boolean b) {
-    throw new UnsupportedOperationException("Not available in wrapper tracker");
-
-  }
-
-  @Override
-  public void publish(String event, String... params) {
-    for (Tracker tracker : trackers) {
-      tracker.publish(event, params);
+    if (!gaEnabled) {
+      return;
     }
+    // GA
+    gaTracker.setScreenName(viewName);
+    gaTracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
-  @Override
-  public void publish(String event, Map<String, String> params) {
-    for (Tracker tracker : trackers) {
-      tracker.publish(event, params);
+  public void trackEvent(String category, String action) {
+    trackEvent(category, action, null, null, null);
+  }
+
+  public void trackEvent(String category, String action, String label, Integer value) {
+    trackEvent(category, action, label, value, null);
+  }
+
+  public void trackEvent(String category, String action, String label, Integer value, String extraKey, String extraValue) {
+    trackEvent(category, action, label, value, ImmutableMap.of(extraKey, extraValue));
+  }
+
+  public void trackEvent(String category, String action, String label, Integer value, Map<String, String> extras) {
+    // Signal
+    Map<String,String> eventValues = Maps.newHashMap();
+    eventValues.put(CATEGORY, category);
+    eventValues.put(ACTION, action);
+    if (label != null) {
+      eventValues.put(LABEL, label);
     }
-  }
+    if (value != null) {
+      eventValues.put(VALUE, value.toString());
+    }
+    if (extras != null) {
+      eventValues.putAll(extras);
+    }
+    signalTracker.publish(TRACK_EVENT, eventValues);
 
-  @Override
-  public void addStandardFields(StandardField... standardFields) {
-    throw new UnsupportedOperationException("Not available in wrapper tracker");
-  }
-
-  @Override
-  public void addCustomField(String s, String s1) {
-    throw new UnsupportedOperationException("Not available in wrapper tracker");
+    if (!gaEnabled) {
+      return;
+    }
+    // GA
+    HitBuilders.EventBuilder eventBuilder = new HitBuilders.EventBuilder();
+    eventBuilder.setCategory(category).setAction(action);
+    if (label != null) {
+      eventBuilder.setLabel(label);
+    }
+    if (value != null) {
+      eventBuilder.setValue(value);
+    }
+    gaTracker.send(eventBuilder.build());
   }
 }

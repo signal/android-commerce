@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import com.google.common.collect.ImmutableList;
 
 import co.signal.commerce.module.EndpointBuilder;
+import co.signal.commerce.module.TrackerWrapper;
 import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.StandardField;
 import co.signal.serverdirect.api.Tracker;
@@ -41,7 +42,7 @@ import static co.signal.commerce.module.Tracking.*;
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
   @Inject
-  Tracker tracker;
+  TrackerWrapper trackerWrapper;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +54,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
   @Override
   protected void onPostResume() {
     super.onPostResume();
-    String name = this.getClass().getSimpleName();
-    tracker.publish(TRACK_VIEW, VIEW_NAME, name);
+    trackerWrapper.trackView(this.getClass().getSimpleName());
   }
 
   /**

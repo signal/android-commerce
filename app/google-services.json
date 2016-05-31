@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "857295242281",
+    "project_id": "commerce-92f7b"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857295242281:android:cf493280c6b81075",
+        "android_client_info": {
+          "package_name": "co.signal.commerce"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr9NR3TT-Trt65CTHnpV0SI0W5vECBDxw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-63638943-2"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

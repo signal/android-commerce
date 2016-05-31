@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import co.signal.commerce.api.UserManager;
 import co.signal.commerce.model.Cart;
+import co.signal.commerce.module.TrackerWrapper;
 import co.signal.serverdirect.api.Tracker;
 
 import static co.signal.commerce.module.Tracking.*;
@@ -21,6 +22,8 @@ import static co.signal.commerce.module.Tracking.*;
 public class BaseActivity extends AppCompatActivity {
   @Inject
   Tracker tracker;
+  @Inject
+  TrackerWrapper trackerWrapper;
   @Inject
   UserManager userManager;
   @Inject

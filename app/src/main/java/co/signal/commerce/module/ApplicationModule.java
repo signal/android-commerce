@@ -1,8 +1,5 @@
 package co.signal.commerce.module;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -11,6 +8,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.common.collect.ImmutableList;
 
 import co.signal.commerce.CategoriesActivity;
@@ -21,6 +19,7 @@ import co.signal.commerce.MainActivity;
 import co.signal.commerce.ProductDetailsActivity;
 import co.signal.commerce.ProductsActivity;
 import co.signal.commerce.ProfileDataActivity;
+import co.signal.commerce.R;
 import co.signal.commerce.SettingsActivity;
 import co.signal.commerce.api.CategoryParser;
 import co.signal.commerce.api.ProductImageUrlParser;
@@ -34,7 +33,6 @@ import co.signal.serverdirect.api.SignalInc;
 import co.signal.serverdirect.api.SignalProfileStore;
 import co.signal.serverdirect.api.StandardField;
 import co.signal.serverdirect.api.Tracker;
-import co.signal.util.SignalLogger;
 import dagger.Module;
 import dagger.Provides;
 
@@ -69,6 +67,7 @@ public class ApplicationModule {
   // Preference keys
   public static final String PREF_SITE_ID = "siteid";
   public static final String PREF_ENVIRONMENT = "environment";
+  public static final String PREF_GOOGLE_ENABLED = "ga_enabled";
   // Preference Values
   public static final String ENV_PROD = "Production";
   public static final String ENV_STAGE = "Staging";
@@ -154,9 +153,11 @@ public class ApplicationModule {
     }
     config.setStandardFields(builder.build());
 
-    // Add something for a custom field, email will be added after a login
+    // Add a few custom fields, email will be added after a login
+    config.addCustomField("sdkVersion", SignalInc.getSdkVersion());
     config.addCustomField("demo", "true");
-    // Add the hashed email if the user is logged in
+
+    // Add the hashed email if the user is already logged in
     if (preferences.contains(UserManager.PREF_EMAIL)) {
       config.addCustomField(UserManager.HASHED_EMAIL,
           Hashes.sha256(preferences.getString(UserManager.PREF_EMAIL, "")));
@@ -181,10 +182,26 @@ public class ApplicationModule {
     // This is not typical of a real app. This demo app allows the config and SiteId
     // to be changed dynamically, so all the Signal objects are discretely provided.
     // Normally, all setup would be in this one method and provide the Tracker as a singleton.
-    if (TextUtils.isEmpty(siteId) || "notset".equals(siteId.toLowerCase())) {
+    if (trackingActive(siteId)) {
       return NULL_TRACKER;
     }
     return signalInc.getTracker(siteId);
+  }
+
+  /**
+   * Returns the Google Analytics tracker.
+   */
+  @Provides
+  public com.google.android.gms.analytics.Tracker provideGoogleTracker() {
+    GoogleAnalytics analytics = GoogleAnalytics.getInstance(appContext);
+    return analytics.newTracker(R.xml.global_tracker);
+  }
+
+  @Provides
+  public TrackerWrapper proviedTrackerWrapper(Tracker signalTracker,
+      com.google.android.gms.analytics.Tracker gaTracker, @Named("SITE_ID") String siteId) {
+    return new TrackerWrapper(signalTracker, gaTracker,
+        trackingActive(siteId) && preferences.getBoolean(PREF_GOOGLE_ENABLED, false));
   }
 
   @Provides @Singleton
@@ -200,6 +217,10 @@ public class ApplicationModule {
   private int getPrefInt(String key, int defaultValue) {
     // Stored as a string via the settings pages, so need to convert back and forth
     return Integer.parseInt(preferences.getString(key, String.valueOf(defaultValue)));
+  }
+
+  private boolean trackingActive(String siteId) {
+    return TextUtils.isEmpty(siteId) || "notset".equals(siteId.toLowerCase());
   }
 
   @Provides @Singleton
@@ -218,5 +239,4 @@ public class ApplicationModule {
   public Cart provideShoppingCart(DBManager dbManager, UserManager userManager) {
     return new Cart(dbManager, userManager);
   }
-
 }

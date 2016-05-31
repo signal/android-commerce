@@ -83,9 +83,7 @@ public class ProductsActivity extends BaseActivity {
           intent.putExtra(PRODUCT_ID, product.getProductId());
           intent.putExtra(PRODUCT_TITLE, categoryTitle);
           startActivity(intent);
-          tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, PRODUCT,
-              LABEL, "productId", VALUE, product.getProductId(), "productId", product.getProductId());
-
+          trackerWrapper.trackEvent(CLICK, PRODUCT, null, null, "productId", product.getProductId());
         }
       });
       productList.addView(view);
@@ -116,13 +114,7 @@ public class ProductsActivity extends BaseActivity {
         return;
       }
       SignalLogger.df("products", "Retrieved %d products from %s", products.size(), categoryId);
-      tracker.publish(TRACK_EVENT,
-          CATEGORY, LOAD,
-          ACTION, PRODUCTS,
-          LABEL, RESULTS,
-          VALUE, String.valueOf(products.size()),
-          "categoryId", categoryId);
-
+      trackerWrapper.trackEvent(LOAD, PRODUCTS, RESULTS, products.size(), "categoryId", categoryId);
       dbManager.saveProducts(categoryId, products);
       drawProducts(products);
     }

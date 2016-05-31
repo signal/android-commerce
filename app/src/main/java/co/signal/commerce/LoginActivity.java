@@ -13,13 +13,14 @@ import android.widget.EditText;
 import com.androidquery.AQuery;
 
 import co.signal.commerce.api.UserManager;
+import co.signal.commerce.module.TrackerWrapper;
 import co.signal.serverdirect.api.Tracker;
 
 import static co.signal.commerce.module.Tracking.*;
 
 public class LoginActivity extends Activity {
   @Inject
-  Tracker tracker;
+  TrackerWrapper trackerWrapper;
   @Inject
   UserManager userManager;
 
@@ -27,7 +28,7 @@ public class LoginActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ((CommerceApplication)getApplication()).inject(this);
-    tracker.publish(TRACK_VIEW, VIEW_NAME, "LoginActivity");
+    trackerWrapper.trackView(this.getClass().getSimpleName());
 
     setContentView(R.layout.activity_login);
     final AQuery aq = new AQuery(this);
@@ -72,7 +73,7 @@ public class LoginActivity extends Activity {
         String email = aq.id(R.id.login_email).getText().toString();
         String pwd = aq.id(R.id.login_password).getText().toString();
         userManager.userLogin(email, pwd);
-        tracker.publish(TRACK_EVENT, CATEGORY, USER, ACTION, LOGIN);
+        trackerWrapper.trackEvent(USER, LOGIN);
 
         finish();
       }
@@ -81,7 +82,7 @@ public class LoginActivity extends Activity {
     aq.id(R.id.btn_cancel).clicked(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, "cancel_login");
+        trackerWrapper.trackEvent(CLICK, "cancel_login");
         finish();
       }
     });

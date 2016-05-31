@@ -21,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableMap;
 
 import co.signal.commerce.api.UserManager;
 import co.signal.commerce.db.DBManager;
@@ -119,12 +121,7 @@ public class CheckoutActivity extends BaseActivity {
               .beginTransaction()
               .replace(R.id.fragment_container, nextFragment)
               .commit();
-          activity().tracker.publish(TRACK_EVENT,
-              CATEGORY, CLICK,
-              ACTION, CHECKOUT_NEXT,
-              LABEL, FRAGMENT,
-              VALUE, nextFragment.getClass().getSimpleName());
-
+          activity().trackerWrapper.trackEvent(CLICK, CHECKOUT_NEXT);
         }
       });
 
@@ -176,14 +173,8 @@ public class CheckoutActivity extends BaseActivity {
               updateQty(cartItemView, cartItem);
             }
             updateTotals();
-            activity().tracker.publish(TRACK_EVENT,
-                CATEGORY, SHOP,
-                ACTION, CART_REMOVE,
-                LABEL, "productId",
-                VALUE, product.getProductId(),
-                "productId", product.getProductId(),
-                "sku", product.getSku(),
-                "price", price.toPlainString());
+            activity().trackerWrapper.trackEvent(SHOP, CART_REMOVE, "productId", Integer.valueOf(product.getProductId()),
+                ImmutableMap.of("productId", product.getProductId(), "sku", product.getSku(), "price", price.toPlainString()));
           }
         });
       }
@@ -208,11 +199,7 @@ public class CheckoutActivity extends BaseActivity {
               .beginTransaction()
               .replace(R.id.fragment_container, new CartFragment())
               .commit();
-          activity().tracker.publish(TRACK_EVENT,
-              CATEGORY, CLICK,
-              ACTION, CHECKOUT_BACK,
-              LABEL, FRAGMENT,
-              VALUE, CartFragment.class.getSimpleName());
+          activity().trackerWrapper.trackEvent(CLICK, CHECKOUT_BACK);
         }
       });
 
@@ -226,10 +213,7 @@ public class CheckoutActivity extends BaseActivity {
           String pwd = aq.id(R.id.login_password).getText().toString();
           activity().userManager.userLogin(email, pwd);
           // Publish event after userManager call so hashed email can be added
-          activity().tracker.publish(TRACK_EVENT,
-              CATEGORY, CLICK,
-              ACTION, LOGIN,
-              "fromCart", "true");
+          activity().trackerWrapper.trackEvent(CLICK, LOGIN);
 
           activity().invalidateOptionsMenu();
 
@@ -300,12 +284,8 @@ public class CheckoutActivity extends BaseActivity {
               .beginTransaction()
               .replace(R.id.fragment_container, new CartFragment())
               .commit();
-          activity().tracker.publish(TRACK_EVENT,
-              CATEGORY, CLICK,
-              ACTION, CHECKOUT_BACK,
-              LABEL, FRAGMENT,
-              VALUE, CartFragment.class.getSimpleName());
 
+          activity().trackerWrapper.trackEvent(CLICK, CHECKOUT_BACK);
         }
       });
       aq.id(R.id.btn_purchase).clicked(new View.OnClickListener() {
@@ -314,11 +294,7 @@ public class CheckoutActivity extends BaseActivity {
           Cart cart = activity().cart;
           activity().orderNum = String.valueOf(System.currentTimeMillis()).substring(5);
           // Event for analytics
-          activity().tracker.publish(TRACK_EVENT,
-              CATEGORY, CLICK,
-              ACTION, PURCHASE,
-              LABEL, "items",
-              VALUE, String.valueOf(cart.getItemCount()));
+          activity().trackerWrapper.trackEvent(CLICK, PURCHASE, "items", cart.getItemCount());
 
           // Event for data feed
           activity().tracker.publish("action:purchase",
@@ -327,7 +303,7 @@ public class CheckoutActivity extends BaseActivity {
               "shipping", "0.00", // Just get a value in there for now
               "numItems", String.valueOf(cart.getItemCount()),
               "orderNum", activity().orderNum // a pseudo sequence number
-              );
+          );
 
           aq.id(R.id.btn_prev).enabled(false);
           aq.id(R.id.btn_purchase).enabled(false);
@@ -365,7 +341,7 @@ public class CheckoutActivity extends BaseActivity {
           Intent intent = new Intent(getContext(), MainActivity.class);
           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
           startActivity(intent);
-          activity().tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, "confirm");
+          activity().trackerWrapper.trackEvent(CLICK, "confirm");
         }
       });
 

@@ -93,13 +93,8 @@ public class CategoriesActivity extends BaseActivity {
       }
 
       SignalLogger.df("category", "Retrieved %d categories from %s", categories.size(), categoryId);
-      tracker.publish(TRACK_EVENT,
-          CATEGORY, LOAD,
-          ACTION, CATEGORIES,
-          LABEL, RESULTS,
-          VALUE, String.valueOf(categories.size()),
-          "categoryType", categoryId == null ? "main" : "sub",
-          "categoryId", categoryId);
+      trackerWrapper.trackEvent(LOAD, CATEGORIES, RESULTS, categories.size(),
+          "categoryType", categoryId == null ? "main" : "sub");
 
       dbManager.saveCategories(categories);
 
@@ -113,12 +108,10 @@ public class CategoriesActivity extends BaseActivity {
             Intent intent;
             if (category.getChildren() > 0) {
               intent = new Intent(CategoriesActivity.this, CategoriesActivity.class);
-              tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, CATEGORY,
-                  LABEL, "categoryId", VALUE, "main", "categoryId", "main");
+              trackerWrapper.trackEvent(CLICK, CATEGORY, "main", null);
             } else {
               intent = new Intent(CategoriesActivity.this, ProductsActivity.class);
-              tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, CATEGORY,
-                  LABEL, "categoryId", VALUE, category.getCategoryId(), "categoryId", category.getCategoryId());
+              trackerWrapper.trackEvent(CLICK, CATEGORY, "sub", null, "categoryId", categoryId);
             }
             intent.putExtra(CATEGORY_ID, category.getCategoryId());
             intent.putExtra(CATEGORY_TITLE, category.getName());

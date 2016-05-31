@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import co.signal.commerce.module.ApplicationModule;
+import co.signal.commerce.module.TrackerWrapper;
 import co.signal.serverdirect.api.StandardField;
 
 import static co.signal.commerce.module.ApplicationModule.ENV_STAGE;
@@ -44,7 +45,7 @@ public class MainActivity extends BaseActivity {
       @Override
       public void onClick(View v) {
         startActivity(new Intent(v.getContext(), CategoriesActivity.class));
-        tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, "start");
+        trackerWrapper.trackEvent(CLICK, "start");
       }
     });
 
@@ -67,7 +68,7 @@ public class MainActivity extends BaseActivity {
       try {
         Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(myIntent);
-        tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, "web", LABEL, "url", VALUE, url);
+        trackerWrapper.trackEvent(CLICK, "web");
       } catch (ActivityNotFoundException e) {
         Toast.makeText(MainActivity.this,
             "No application can handle this request. Please install a web browser",
