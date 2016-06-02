@@ -50,7 +50,7 @@ public class EndpointBuilder {
   }
 
   private String getUrl() {
-    String curEnv = preferences.getString("environment", ENV_PROD);
+    String curEnv = preferences.getString("environment", ENV_STAGE);
     if (ENV_PROD.equals(curEnv)) {
       return PROD_URL;
     } else if (ENV_STAGE.equals(curEnv)) {

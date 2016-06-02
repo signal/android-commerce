@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Commerce Demo</string>
+    <string name="app_name">Commerce</string>
 
     <string name="action_cart">Cart</string>
     <string name="action_settings">Settings</string>
@@ -16,12 +16,13 @@
 
     <string name="pref_header_general">General</string>
     <string name="pref_title_site_id">Site ID</string>
-    <string name="pref_default_site_id">NotSet</string>
+    <string name="pref_default_site_id">C7cIETB</string>
 
     <string name="pref_title_lifecycle">Lifecycle Events</string>
     <string name="pref_title_profile">Profile Data</string>
     <string name="pref_title_background">Background Sending</string>
     <string name="pref_title_wifi_only">Wifi Only</string>
+    <string name="pref_title_gai_sdk">Google Analytics SDK</string>
 
     <string name="pref_header_controls">Controls</string>
     <string name="pref_title_msg_expiration">Message Expiration</string>

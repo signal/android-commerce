@@ -33,6 +33,7 @@ import co.signal.serverdirect.api.SignalInc;
 import co.signal.serverdirect.api.SignalProfileStore;
 import co.signal.serverdirect.api.StandardField;
 import co.signal.serverdirect.api.Tracker;
+import co.signal.util.SignalLogger;
 import dagger.Module;
 import dagger.Provides;
 
@@ -54,7 +55,7 @@ import dagger.Provides;
     SettingsActivity.ControlsPreferenceFragment.class,
     SettingsActivity.StandardFieldPreferenceFragment.class,
     SettingsActivity.LoggingPreferenceFragment.class,
-      CommerceApplication.TestInject.class
+    CommerceApplication.TestInject.class
   }
 )
 public class ApplicationModule {
@@ -67,7 +68,9 @@ public class ApplicationModule {
   // Preference keys
   public static final String PREF_SITE_ID = "siteid";
   public static final String PREF_ENVIRONMENT = "environment";
-  public static final String PREF_GOOGLE_ENABLED = "ga_enabled";
+  public static final String PREF_GA_ENABLED = "enable_ga";
+  public static final String PREF_PREFIX = "pref_";
+
   // Preference Values
   public static final String ENV_PROD = "Production";
   public static final String ENV_STAGE = "Staging";
@@ -99,7 +102,7 @@ public class ApplicationModule {
 
   @Provides @Named(NAME_SITE_ID)
   public String provideSiteId() {
-    return preferences.getString(PREF_SITE_ID, "NotSet"); // Set in SettingsActivity
+    return preferences.getString(PREF_SITE_ID, "C7cIETB"); // Set in SettingsActivity
   }
 
   @Provides @Named(NAME_ENVIRONMENT)
@@ -144,9 +147,19 @@ public class ApplicationModule {
     }
 
     // Set the standard fields
+    if (preferences.getBoolean("first_run", true)) {
+      preferences.edit().putBoolean("first_run", false)
+          .putBoolean(PREF_PREFIX + StandardField.ApplicationVersion.getName(), true)
+          .putBoolean(PREF_PREFIX + StandardField.OsVersion.getName(), true)
+          .putBoolean(PREF_PREFIX + StandardField.DeviceId.getName(), true)
+          .putBoolean(PREF_PREFIX + StandardField.DeviceIdType.getName(), true)
+          .putBoolean(PREF_PREFIX + StandardField.ScreenResolution.getName(), true)
+          .putBoolean(PREF_PREFIX + StandardField.UserLanguage.getName(), true)
+          .apply();
+    }
     ImmutableList.Builder<StandardField> builder = ImmutableList.builder();
     for (StandardField stdFld : StandardField.values()) {
-      String key = "pref_" + stdFld.getName();
+      String key = PREF_PREFIX + stdFld.getName();
       if (preferences.getBoolean(key, false)) {
         builder.add(stdFld);
       }
@@ -166,7 +179,8 @@ public class ApplicationModule {
     return config;
   }
 
-  @Provides @Singleton
+  @Provides
+  @Singleton
   public SignalInc provideSignalInc(SignalConfig config) {
     return SignalInc.getInstance(appContext, config);
   }
@@ -183,25 +197,26 @@ public class ApplicationModule {
     // to be changed dynamically, so all the Signal objects are discretely provided.
     // Normally, all setup would be in this one method and provide the Tracker as a singleton.
     if (trackingActive(siteId)) {
-      return NULL_TRACKER;
+      return signalInc.getTracker(siteId);
     }
-    return signalInc.getTracker(siteId);
+    return NULL_TRACKER;
   }
 
   /**
    * Returns the Google Analytics tracker.
    */
-  @Provides
+  @Provides @Singleton
   public com.google.android.gms.analytics.Tracker provideGoogleTracker() {
     GoogleAnalytics analytics = GoogleAnalytics.getInstance(appContext);
     return analytics.newTracker(R.xml.global_tracker);
   }
 
   @Provides
-  public TrackerWrapper proviedTrackerWrapper(Tracker signalTracker,
+  public TrackerWrapper provideTrackerWrapper(Tracker signalTracker,
       com.google.android.gms.analytics.Tracker gaTracker, @Named("SITE_ID") String siteId) {
-    return new TrackerWrapper(signalTracker, gaTracker,
-        trackingActive(siteId) && preferences.getBoolean(PREF_GOOGLE_ENABLED, false));
+    boolean gaActive = preferences.getBoolean(PREF_GA_ENABLED, true);
+    SignalLogger.v("Return wrapper: " + (trackingActive(siteId) && gaActive));
+    return new TrackerWrapper(signalTracker, gaTracker, trackingActive(siteId) && gaActive);
   }
 
   @Provides @Singleton
@@ -220,7 +235,7 @@ public class ApplicationModule {
   }
 
   private boolean trackingActive(String siteId) {
-    return TextUtils.isEmpty(siteId) || "notset".equals(siteId.toLowerCase());
+    return !TextUtils.isEmpty(siteId) && !"notset".equals(siteId.toLowerCase());
   }
 
   @Provides @Singleton

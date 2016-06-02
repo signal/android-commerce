@@ -38,8 +38,7 @@ public class BaseActivity extends AppCompatActivity {
   @Override
   protected void onPostResume() {
     super.onPostResume();
-    String name = this.getClass().getSimpleName();
-    tracker.publish(TRACK_VIEW, VIEW_NAME, name);
+    trackerWrapper.trackView(this.getClass().getSimpleName());
 
     // The menu might have changed due to login or cart changes
     invalidateOptionsMenu();
@@ -74,19 +73,19 @@ public class BaseActivity extends AppCompatActivity {
             .show();
       } else {
         startActivity(new Intent(this, CheckoutActivity.class));
-        tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "checkout");
+        trackerWrapper.trackEvent(CLICK, MENU, "checkout", null);
       }
       return true;
     } else if (id == R.id.action_settings) {
       startActivity(new Intent(this, SettingsActivity.class));
-      tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "settings");
+      trackerWrapper.trackEvent(CLICK, MENU, "settings", null);
       return true;
     } else if (id == R.id.action_login) {
       startActivity(new Intent(this, LoginActivity.class));
-      tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "login");
+      trackerWrapper.trackEvent(CLICK, MENU, "login", null);
       return true;
     } else if (id == R.id.action_logout) {
-      tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "logout");
+      trackerWrapper.trackEvent(CLICK, MENU, "logout", null);
       // Call publish above before UserManager call so logout has the hashed email
       userManager.userLogout();
       invalidateOptionsMenu();
@@ -98,10 +97,10 @@ public class BaseActivity extends AppCompatActivity {
       // First event to retrieve the profile data, second event for analytics
       // Too tricky on the server side to configure both with single event
       tracker.publish("profile:load");
-      tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "profileLoad");
+      trackerWrapper.trackEvent(CLICK, MENU, "profileLoad", null);
       return true;
     } else if (id == R.id.action_profile_clear) {
-      tracker.publish(TRACK_EVENT, CATEGORY, CLICK, ACTION, MENU, LABEL, "profileClear");
+      trackerWrapper.trackEvent(CLICK, MENU, "profileClear", null);
       userManager.clear();
       return true;
     } else if (id == android.R.id.home) {

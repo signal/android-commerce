@@ -146,14 +146,10 @@ public class CheckoutActivity extends BaseActivity {
               cart.addProduct(cartItem.getProduct());
               updateQty(cartItemView, cartItem);
               updateTotals();
-              activity().tracker.publish(TRACK_EVENT,
-                  CATEGORY, SHOP,
-                  ACTION, CART_ADD,
-                  LABEL, "productId",
-                  VALUE, product.getProductId(),
-                  "productId", product.getProductId(),
-                  "sku", product.getSku(),
-                  "price", price.toPlainString());
+              activity().trackerWrapper.trackEvent(SHOP, CART_ADD, "productId", Integer.valueOf(product.getProductId()),
+                  ImmutableMap.of("productId", product.getProductId(),
+                      "sku", product.getSku(),
+                      "price", price.toPlainString()));
             }
           }
         });

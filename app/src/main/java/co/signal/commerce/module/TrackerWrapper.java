@@ -6,13 +6,15 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import co.signal.util.SignalLogger;
+
 /**
- * Wrapper class to wrap multiple trackers in the event more than one is active
+ * Wrapper class to wrap multiple trackers and distribute events
  */
 public class TrackerWrapper implements Tracking {
-  private co.signal.serverdirect.api.Tracker signalTracker;
-  private com.google.android.gms.analytics.Tracker gaTracker;
-  private boolean gaEnabled;
+  private final co.signal.serverdirect.api.Tracker signalTracker;
+  private final com.google.android.gms.analytics.Tracker gaTracker;
+  private final boolean gaEnabled;
 
   public TrackerWrapper(co.signal.serverdirect.api.Tracker signalTracker,
                         com.google.android.gms.analytics.Tracker gaTracker, boolean gaEnabled) {
@@ -26,6 +28,7 @@ public class TrackerWrapper implements Tracking {
     signalTracker.publish(TRACK_VIEW, VIEW_NAME, viewName);
 
     if (!gaEnabled) {
+      SignalLogger.v("GA Disabled - view ignored");
       return;
     }
     // GA
@@ -62,6 +65,7 @@ public class TrackerWrapper implements Tracking {
     signalTracker.publish(TRACK_EVENT, eventValues);
 
     if (!gaEnabled) {
+      SignalLogger.v("GA Disabled - event ignored");
       return;
     }
     // GA
