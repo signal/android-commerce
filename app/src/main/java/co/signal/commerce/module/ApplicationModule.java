@@ -18,7 +18,6 @@ import co.signal.commerce.LoginActivity;
 import co.signal.commerce.MainActivity;
 import co.signal.commerce.ProductDetailsActivity;
 import co.signal.commerce.ProductsActivity;
-import co.signal.commerce.ProfileDataActivity;
 import co.signal.commerce.R;
 import co.signal.commerce.SettingsActivity;
 import co.signal.commerce.api.CategoryParser;
@@ -30,7 +29,6 @@ import co.signal.commerce.model.Cart;
 import co.signal.serverdirect.api.Hashes;
 import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.SignalInc;
-import co.signal.serverdirect.api.SignalProfileStore;
 import co.signal.serverdirect.api.StandardField;
 import co.signal.serverdirect.api.Tracker;
 import co.signal.util.SignalLogger;
@@ -46,7 +44,7 @@ import dagger.Provides;
     ProductDetailsActivity.class,
     LoginActivity.class,
     CheckoutActivity.class,
-    ProfileDataActivity.class,
+//    ProfileDataActivity.class,
     UserManager.class,
     EndpointBuilder.class,
     DBManager.class,
@@ -131,7 +129,7 @@ public class ApplicationModule {
         .setBatteryPercentage(getPrefInt("battery_percentage", 20))
         .setSocketConnectTimeout(getPrefLong("socket_connect_to", 10000))
         .setSocketReadTimeout(getPrefLong("socket_read_to", 5000))
-        .setProfileDataEnabled(preferences.getBoolean("enable_profile", false))
+//        .setProfileDataEnabled(preferences.getBoolean("enable_profile", false))
         .setPublishInBackground(preferences.getBoolean("enable_background", false))
         .setNetworkWifiOnly(preferences.getBoolean("enable_wifi", false))
         .setLifecycleEventsEnabled(preferences.getBoolean("enable_lifecycle", true))
@@ -219,10 +217,10 @@ public class ApplicationModule {
     return new TrackerWrapper(signalTracker, gaTracker, trackingActive(siteId) && gaActive);
   }
 
-  @Provides @Singleton
-  public SignalProfileStore provideProfileStore(SignalInc signalInc) {
-    return signalInc.getProfileStore();
-  }
+//  @Provides @Singleton
+//  public SignalProfileStore provideProfileStore(SignalInc signalInc) {
+//    return signalInc.getProfileStore();
+//  }
 
   private long getPrefLong(String key, long defaultValue) {
     // Stored as a string via the settings pages, so need to convert back and forth

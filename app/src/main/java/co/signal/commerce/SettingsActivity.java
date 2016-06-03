@@ -157,12 +157,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
           config.setLifecycleEventsEnabled((Boolean) value);
         }
       });
-      findPreference("enable_profile").setOnPreferenceChangeListener(new SignalConfigUpdateListener() {
-        @Override
-        void updateConfig(Preference preference, Object value) {
-          config.setProfileDataEnabled((Boolean) value);
-        }
-      });
+//      findPreference("enable_profile").setOnPreferenceChangeListener(new SignalConfigUpdateListener() {
+//        @Override
+//        void updateConfig(Preference preference, Object value) {
+//          config.setProfileDataEnabled((Boolean) value);
+//        }
+//      });
       findPreference("enable_background").setOnPreferenceChangeListener(new SignalConfigUpdateListener() {
         @Override
         void updateConfig(Preference preference, Object value) {

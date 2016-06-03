@@ -8,7 +8,7 @@ import android.text.TextUtils;
 
 import co.signal.serverdirect.api.Hashes;
 import co.signal.serverdirect.api.SignalConfig;
-import co.signal.serverdirect.api.SignalProfileStore;
+//import co.signal.serverdirect.api.SignalProfileStore;
 
 /**
  * A user manager class that manages the user account and associated data.
@@ -22,8 +22,8 @@ public class UserManager {
   SharedPreferences prefs;
   @Inject
   SignalConfig config;
-  @Inject
-  SignalProfileStore profileStore;
+//  @Inject
+//  SignalProfileStore profileStore;
 
   public boolean userLogin(String email, String password) {
     // A real app would probably encrypt this value before persisting it
@@ -49,7 +49,7 @@ public class UserManager {
   }
 
   public void clear() {
-    profileStore.clear();
+//    profileStore.clear();
   }
 
   public static boolean isValidEmail(String target) {
@@ -64,7 +64,8 @@ public class UserManager {
     if (!isLoggedIn()) {
       return false;
     }
-    return "true".equals(profileStore.getData("Preferred"));
+//    return "true".equals(profileStore.getData("Preferred"));
+    return false;
   }
 }
 
