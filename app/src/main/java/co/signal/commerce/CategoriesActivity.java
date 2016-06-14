@@ -57,7 +57,7 @@ public class CategoriesActivity extends BaseActivity {
   @Override
   protected void onPostResume() {
     super.onPostResume();
-
+    showSdkStatus();
     if (categoryTitle != null) {
       Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
       toolbar.setTitle(categoryTitle);
