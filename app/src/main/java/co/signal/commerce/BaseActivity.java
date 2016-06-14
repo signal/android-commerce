@@ -4,7 +4,10 @@ import javax.inject.Inject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 import co.signal.commerce.api.UserManager;
 import co.signal.commerce.model.Cart;
 import co.signal.commerce.module.TrackerWrapper;
+import co.signal.commerce.view.SdkStatusDialogFragment;
 import co.signal.serverdirect.api.Tracker;
 
 import static co.signal.commerce.module.Tracking.*;
@@ -42,6 +46,14 @@ public class BaseActivity extends AppCompatActivity {
 
     // The menu might have changed due to login or cart changes
     invalidateOptionsMenu();
+  }
+
+  protected void showSdkStatus() {
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
+    if (toolbar == null) {
+      return;
+    }
+    toolbar.setTitle("Queue:0 Event:-");
   }
 
   @Override

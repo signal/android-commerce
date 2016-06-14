@@ -68,6 +68,12 @@ public class CheckoutActivity extends BaseActivity {
         .commit();
   }
 
+  @Override
+  protected void onPostResume() {
+    super.onPostResume();
+    showSdkStatus();
+  }
+
   /**
    * The base fragment for all others since they all contain the totals
    */
