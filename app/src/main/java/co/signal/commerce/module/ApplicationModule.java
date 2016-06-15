@@ -100,7 +100,7 @@ public class ApplicationModule {
 
   @Provides @Named(NAME_SITE_ID)
   public String provideSiteId() {
-    return preferences.getString(PREF_SITE_ID, "C7cIETB"); // Set in SettingsActivity
+    return preferences.getString(PREF_SITE_ID, "KzzOeke"); // Set in SettingsActivity
   }
 
   @Provides @Named(NAME_ENVIRONMENT)
