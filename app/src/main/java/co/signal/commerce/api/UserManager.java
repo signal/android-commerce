@@ -6,9 +6,14 @@ import javax.inject.Singleton;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import co.signal.commerce.module.TrackerWrapper;
 import co.signal.serverdirect.api.Hashes;
 import co.signal.serverdirect.api.SignalConfig;
 import co.signal.serverdirect.api.SignalProfileStore;
+import co.signal.serverdirect.api.Tracker;
+
+import static co.signal.commerce.module.Tracking.LOGIN;
+import static co.signal.commerce.module.Tracking.USER;
 
 /**
  * A user manager class that manages the user account and associated data.
@@ -18,6 +23,10 @@ public class UserManager {
   public static final String PREF_EMAIL = "user_email";
   public static final String HASHED_EMAIL = "uid-hashed-email-sha256";
 
+  @Inject
+  TrackerWrapper trackerWrapper;
+  @Inject
+  Tracker tracker;
   @Inject
   SharedPreferences prefs;
   @Inject
@@ -29,6 +38,10 @@ public class UserManager {
     // A real app would probably encrypt this value before persisting it
     prefs.edit().putString(PREF_EMAIL, email).apply();
     config.addCustomField(HASHED_EMAIL, Hashes.sha256(email));
+
+    trackerWrapper.trackEvent(USER, LOGIN); // standard tracking
+    tracker.publish("action:login"); // separate event for profile sync
+
     // TODO: Call server
     return true;
   }
@@ -45,6 +58,9 @@ public class UserManager {
     prefs.edit().remove(PREF_EMAIL).apply();
     config.removeCustomField(HASHED_EMAIL);
     clear();
+
+    tracker.publish("action:logout");
+
     // TODO: Call server
   }
 

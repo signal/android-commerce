@@ -13,7 +13,7 @@
         android:key="environment"
         android:entries="@array/pref_environment_values"
         android:entryValues="@array/pref_environment_values"
-        android:defaultValue="Staging"
+        android:defaultValue="Production"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_environment"/>

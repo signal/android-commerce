@@ -214,9 +214,6 @@ public class CheckoutActivity extends BaseActivity {
           String email = aq.id(R.id.login_email).getText().toString();
           String pwd = aq.id(R.id.login_password).getText().toString();
           activity().userManager.userLogin(email, pwd);
-          // Publish event after userManager call so hashed email can be added
-          activity().trackerWrapper.trackEvent(CLICK, LOGIN);
-
           activity().invalidateOptionsMenu();
 
           // Add a small delay here to mimic an actual login
