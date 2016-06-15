@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import co.signal.commerce.api.UserManager;
 import co.signal.commerce.model.Cart;
+import co.signal.commerce.module.SdkEventStack;
 import co.signal.commerce.module.TrackerWrapper;
 import co.signal.commerce.view.SdkStatusDialogFragment;
 import co.signal.serverdirect.api.Tracker;
@@ -32,6 +33,8 @@ public class BaseActivity extends AppCompatActivity {
   UserManager userManager;
   @Inject
   Cart cart;
+  @Inject
+  SdkEventStack eventStack;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +49,19 @@ public class BaseActivity extends AppCompatActivity {
 
     // The menu might have changed due to login or cart changes
     invalidateOptionsMenu();
+    eventStack.setCurrentView(this);
   }
 
-  protected void showSdkStatus() {
+  public void showSdkStatus() {
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
     if (toolbar == null) {
       return;
     }
-    toolbar.setTitle("Queue:0 Event:-");
+    StringBuilder sb = new StringBuilder("Queue:").append(eventStack.getQueueSize());
+    if (eventStack.getQueueSize() > 0) {
+      sb.append(" ").append(eventStack.activeEventInfo());
+    }
+    toolbar.setTitle(sb.toString());
   }
 
   @Override

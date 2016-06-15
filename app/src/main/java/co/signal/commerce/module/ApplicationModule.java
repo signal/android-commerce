@@ -179,8 +179,7 @@ public class ApplicationModule {
     return config;
   }
 
-  @Provides
-  @Singleton
+  @Provides @Singleton
   public SignalInc provideSignalInc(SignalConfig config) {
     return SignalInc.getInstance(appContext, config);
   }
@@ -211,12 +210,20 @@ public class ApplicationModule {
     return analytics.newTracker(R.xml.global_tracker);
   }
 
+  @Provides @Singleton
+  public SdkEventStack provideEventStack(SignalInc signalInc) {
+    SdkEventStack eventStack = new SdkEventStack();
+    signalInc.registerCallback(eventStack);
+    return eventStack;
+  }
+
   @Provides
   public TrackerWrapper provideTrackerWrapper(Tracker signalTracker,
-      com.google.android.gms.analytics.Tracker gaTracker, @Named("SITE_ID") String siteId) {
+      com.google.android.gms.analytics.Tracker gaTracker,
+      SdkEventStack eventStack, @Named("SITE_ID") String siteId) {
     boolean gaActive = preferences.getBoolean(PREF_GA_ENABLED, true);
     SignalLogger.v("Return wrapper: " + (trackingActive(siteId) && gaActive));
-    return new TrackerWrapper(signalTracker, gaTracker, trackingActive(siteId) && gaActive);
+    return new TrackerWrapper(signalTracker, gaTracker, eventStack, trackingActive(siteId) && gaActive);
   }
 
   @Provides @Singleton

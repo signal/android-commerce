@@ -14,12 +14,15 @@ import co.signal.util.SignalLogger;
 public class TrackerWrapper implements Tracking {
   private final co.signal.serverdirect.api.Tracker signalTracker;
   private final com.google.android.gms.analytics.Tracker gaTracker;
+  private final SdkEventStack eventStack;
   private final boolean gaEnabled;
 
   public TrackerWrapper(co.signal.serverdirect.api.Tracker signalTracker,
-                        com.google.android.gms.analytics.Tracker gaTracker, boolean gaEnabled) {
+                        com.google.android.gms.analytics.Tracker gaTracker,
+                        SdkEventStack eventStack, boolean gaEnabled) {
     this.signalTracker = signalTracker;
     this.gaTracker = gaTracker;
+    this.eventStack = eventStack;
     this.gaEnabled = gaEnabled;
   }
 
