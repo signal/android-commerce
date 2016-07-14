@@ -34,7 +34,7 @@ public class SdkEventStack implements ServerDirectCallback {
   }
 
   @Override
-  public synchronized void onPublish(ServerDirectRequest request, int queueSize) {
+  public synchronized void onPublish(int queueSize) {
     this.queueSize = queueSize;
     if (currentView != null) {
       currentView.runOnUiThread(new Runnable() {
